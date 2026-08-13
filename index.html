@@ -294,7 +294,10 @@ const QUEUES = [
     match: j => {
       const m = j.matchStr;
       return m.includes('sales review') || m.includes('order review') ||
-             m.includes('design needed');
+             m.includes('design needed') || m.includes('estimate : estimate') ||
+             (m.includes('estimate') && !m.includes('awaiting') && 
+              !m.includes('approved') && !m.includes('revision') &&
+              !m.includes('cancelled') && !m.includes('design needed'));
     }
   },
   {
@@ -303,10 +306,12 @@ const QUEUES = [
     color: 'var(--yellow)',
     match: j => {
       const m = j.matchStr;
-      return m.includes('awaiting customer action') ||
-             m.includes('awaiting customer approval') ||
-             m.includes('awaiting proof approval') ||
+      return m.includes('awaiting customer') ||
+             m.includes('customer action') ||
+             m.includes('awaiting proof') ||
              m.includes('proof approved') ||
+             m.includes('follow-up') ||
+             m.includes('follow up') ||
              m.includes('revision');
     }
   },
@@ -416,51 +421,55 @@ function initials(name) {
 
 // ── MAP API DATA ──
 function mapOrder(item) {
-  // Handle both ExOrder and ExOrderProduct field names
-  // ExOrderProduct uses ProductStatusCBName like "WIP : In Design"
+  // Handle ExOrder/GetOrdersByStatus and ExOrderProduct responses
+  // GetOrdersByStatus returns: OrderId, Status, OrderStatus, CompanyName, OrderSalesPerson, etc.
+  // ExOrderProduct returns: ProductStatusCBName, ProductDescription, IsVended, etc.
+
   const statusCBName = item.ProductStatusCBName || '';
-  const statusRaw = statusCBName || item.Status || '';
+  const orderStatus = item.Status || item.OrderStatus || '';
+  const statusRaw = statusCBName || orderStatus;
   const substatusRaw = item.ProductSubStatus || item.ProductSubstatus || item.Substatus || '';
 
   const statusFull = statusRaw;
   const statusParts = statusRaw.split(' : ');
   const mainStatus = statusParts[0]?.trim() || statusRaw;
-  const subStatus = statusParts.length > 1 ? statusParts.slice(1).join(' : ').trim() : (substatusRaw || '');
+  const subStatus = statusParts.length > 1 ? statusParts.slice(1).join(' : ').trim() : substatusRaw;
 
-  // matchStr covers everything for queue routing
+  // matchStr used for queue routing — must contain full status string
   const matchStr = (statusRaw + ' ' + substatusRaw).toLowerCase();
 
-  // Due date — ExOrderProduct uses ProductProductionDue
+  // Due dates — try all possible field names
   const dueDate = parseDate(item.ProductProductionDue) ||
                   parseDate(item.OrderDueDate) ||
+                  parseDate(item.DueDate) ||
                   parseDate(item.EstimateProjectedOrderDueDate);
 
-  // Amount — ExOrderProduct uses ProductSubTotal
+  // Amount
   const amount = parseFloat(
     item.ProductSubTotal || item.ProductTotal ||
     item.OrderSubTotal || item.OrderTotal ||
-    item.SubtotalAmount || 0
+    item.SubtotalAmount || item.Amount || 0
   );
 
-  // Rep — ExOrderProduct may not have rep, use Designer name as fallback
+  // Rep
   const designerName = item.Designer
     ? `${item.Designer.FirstName||''} ${item.Designer.LastName||''}`.trim()
     : '';
   const rep = item.OrderSalesPerson || item.SalespersonName || designerName || '—';
 
-  // Order ID — ExOrderProduct has OrderId linking back to the order
+  // Order ID
   const orderId = item.ExOrderProductId
     ? `${item.OrderId}-P${item.ExOrderProductId}`
-    : String(item.OrderId || item.Id || '');
+    : String(item.OrderId || item.EstimateId || item.Id || '');
 
   return {
-    id: String(item.ExOrderProductId || item.OrderId || item.Id || ''),
+    id: String(item.ExOrderProductId || item.OrderId || item.EstimateId || item.Id || ''),
     orderId: orderId,
     customer: item.CompanyName || item.CustomerName || item.OrderContact || '—',
-    contact: item.OrderContact || '',
-    email: item.OrderContactEmail || '',
+    contact: item.OrderContact || item.EstimateContact || '',
+    email: item.OrderContactEmail || item.EstimateContactEmail || '',
     phone: item.CompanyPhone || '',
-    description: item.ProductDescription || item.OrderDescription || item.OrderText || '—',
+    description: item.ProductDescription || item.OrderDescription || item.OrderText || item.EstimateText || '—',
     status: mainStatus,
     substatus: subStatus,
     statusFull: statusFull,
@@ -525,32 +534,28 @@ async function loadAll() {
   try {
     setLoader('Loading active jobs...');
     // Per Corebridge support guidance (Ticket FD384974):
-    // Use GetOrdersByStatus with listOfStatus parameter for active jobs
+    // Pull each status separately to ensure we get all jobs
     let rawOrders = [];
-    try {
-      // Pull WIP + BUILT + ESTIMATE orders in one call
-      const activeOrders = await apiFetch('ExOrder', 'GetOrdersByStatus', 'listOfStatus=WIP,BUILT,ESTIMATE');
-      console.log('Active orders:', activeOrders.length);
-      rawOrders = rawOrders.concat(activeOrders);
-    } catch(e) {
-      console.warn('GetOrdersByStatus failed:', e.message);
-      // Try individual statuses as fallback
-      for (const status of ['WIP', 'BUILT', 'ESTIMATE']) {
-        try {
-          const jobs = await apiFetch('ExOrder', 'GetOrdersByStatus', `listOfStatus=${status}`);
-          console.log(`${status}:`, jobs.length);
-          rawOrders = rawOrders.concat(jobs);
-        } catch(e2) { console.warn(status, e2.message); }
-      }
+
+    // Pull WIP, BUILT, and ESTIMATE orders separately
+    for (const status of ['WIP', 'BUILT', 'ESTIMATE']) {
+      try {
+        const jobs = await apiFetch('ExOrder', 'GetOrdersByStatus', `listOfStatus=${status}`);
+        console.log(`${status} orders:`, jobs.length);
+        rawOrders = rawOrders.concat(jobs);
+      } catch(e) { console.warn(`${status}:`, e.message); }
     }
 
-    // Also pull line-level product status for In Design, Vended etc.
+    // Also pull line-level product status (In Design, Vended etc.)
+    // Per PDF: GET /api/public/ExOrderProduct/GetExOrderProductByOrderStatus?listOfStatus=WIP,BUILT
     let rawProducts = [];
     try {
-      const products = await apiFetch('ExOrderProduct', 'GetExOrderProductByOrderStatus', 'listOfStatus=WIP,BUILT');
+      const products = await apiFetch('ExOrderProduct', 'GetExOrderProductByOrderStatus', 'listOfStatus=WIP,BUILT,ESTIMATE');
       console.log('Product lines:', products.length);
       rawProducts = products;
-    } catch(e) { console.warn('ExOrderProduct sub-status:', e.message); }
+    } catch(e) { console.warn('Product lines:', e.message); }
+
+    console.log('Total raw orders:', rawOrders.length, '| Product lines:', rawProducts.length);
 
     setLoader('Loading estimates...');
     let rawEstimates = [];
