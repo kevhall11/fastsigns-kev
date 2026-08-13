@@ -524,27 +524,33 @@ async function loadAll() {
 
   try {
     setLoader('Loading active jobs...');
-    // Pull active jobs by order status using ExOrderProduct sub-endpoint
-    // Uses ?endpoint=ExOrderProduct&action=GetExOrderProductByOrderStatus&orderStatus=X
+    // Per Corebridge support guidance (Ticket FD384974):
+    // Use GetOrdersByStatus with listOfStatus parameter for active jobs
     let rawOrders = [];
-    const activeStatuses = ['WIP', 'BUILT', 'ESTIMATE'];
-    for (const status of activeStatuses) {
-      try {
-        const jobs = await apiFetch('ExOrderProduct', 'GetExOrderProductByOrderStatus', `orderStatus=${status}`);
-        console.log(`${status}: ${jobs.length} jobs`);
-        rawOrders = rawOrders.concat(jobs);
-      } catch(e) {
-        console.warn(`Status ${status}:`, e.message);
+    try {
+      // Pull WIP + BUILT + ESTIMATE orders in one call
+      const activeOrders = await apiFetch('ExOrder', 'GetOrdersByStatus', 'listOfStatus=WIP,BUILT,ESTIMATE');
+      console.log('Active orders:', activeOrders.length);
+      rawOrders = rawOrders.concat(activeOrders);
+    } catch(e) {
+      console.warn('GetOrdersByStatus failed:', e.message);
+      // Try individual statuses as fallback
+      for (const status of ['WIP', 'BUILT', 'ESTIMATE']) {
+        try {
+          const jobs = await apiFetch('ExOrder', 'GetOrdersByStatus', `listOfStatus=${status}`);
+          console.log(`${status}:`, jobs.length);
+          rawOrders = rawOrders.concat(jobs);
+        } catch(e2) { console.warn(status, e2.message); }
       }
     }
-    // Fall back to base ExOrder if sub-endpoints fail
-    if (rawOrders.length === 0) {
-      try {
-        const baseOrders = await apiFetch('ExOrder');
-        rawOrders = rawOrders.concat(baseOrders);
-        console.log('Fallback ExOrder:', baseOrders.length);
-      } catch(e) { console.warn('Base ExOrder:', e.message); }
-    }
+
+    // Also pull line-level product status for In Design, Vended etc.
+    let rawProducts = [];
+    try {
+      const products = await apiFetch('ExOrderProduct', 'GetExOrderProductByOrderStatus', 'listOfStatus=WIP,BUILT');
+      console.log('Product lines:', products.length);
+      rawProducts = products;
+    } catch(e) { console.warn('ExOrderProduct sub-status:', e.message); }
 
     setLoader('Loading estimates...');
     let rawEstimates = [];
@@ -557,14 +563,52 @@ async function loadAll() {
     // Dedupe orders by ID
     const seen = new Set();
     orders = [];
+
+    // Process orders from GetOrdersByStatus
     rawOrders.forEach(item => {
       const id = String(item.OrderId || item.Id || '');
-      const statusRaw = (item.Status || '').toUpperCase();
+      const statusRaw = (item.Status || item.OrderStatus || '').toUpperCase();
       if (!id || seen.has(id)) return;
       if (statusRaw === 'CANCELLED' || statusRaw === 'VOIDED' || statusRaw === 'CLOSED') return;
       seen.add(id);
       orders.push(mapOrder(item));
     });
+
+    // If we got product-level data, use it to enrich order status info
+    if (rawProducts.length > 0 && orders.length > 0) {
+      const productsByOrderId = {};
+      rawProducts.forEach(p => {
+        const oid = String(p.OrderId || '');
+        if (!productsByOrderId[oid]) productsByOrderId[oid] = [];
+        productsByOrderId[oid].push(p);
+      });
+      // Add product status info to matching orders
+      orders.forEach(order => {
+        const oid = order.orderId.split('-')[0];
+        const prods = productsByOrderId[oid];
+        if (prods && prods.length > 0) {
+          // Use the most specific product status for queue routing
+          const prod = prods[0];
+          if (prod.ProductStatusCBName && !order.statusFull.includes(':')) {
+            order.statusFull = prod.ProductStatusCBName;
+            order.matchStr = prod.ProductStatusCBName.toLowerCase();
+          }
+        }
+      });
+    }
+
+    // If still no orders, try product endpoint directly as last resort
+    if (orders.length === 0 && rawProducts.length > 0) {
+      const seenP = new Set();
+      rawProducts.forEach(item => {
+        const id = String(item.ExOrderProductId || item.OrderId || '');
+        if (!id || seenP.has(id)) return;
+        seenP.add(id);
+        orders.push(mapOrder(item));
+      });
+    }
+
+    console.log('Total active orders mapped:', orders.length);
 
     // Dedupe estimates
     const seenE = new Set();
