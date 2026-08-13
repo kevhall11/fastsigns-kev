@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FastSigns Eatontown</title>
+<title>FastSigns Eatontown — Operations Hub</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -15,82 +15,145 @@
   --red:#FF4444;--yellow:#FFB800;--green:#00D26A;
   --blue:#3B82F6;--purple:#A855F7;--teal:#06B6D4;--pink:#EC4899;
 }
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
 
+/* HEADER */
 header{background:var(--s1);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100}
 .logo{width:28px;height:28px;background:var(--orange);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:#fff;flex-shrink:0}
 .logo-title{font-size:13px;font-weight:700}
 .logo-sub{font-size:11px;color:var(--muted);margin-top:1px}
-.header-center{flex:1;display:flex;justify-content:center}
+.hcenter{flex:1;display:flex;justify-content:center}
 .nav-tabs{display:flex;gap:2px;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:3px}
 .nav-tab{background:none;border:none;color:var(--muted);font-size:12px;font-weight:600;padding:5px 14px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap}
 .nav-tab:hover{color:var(--text)}
 .nav-tab.active{background:var(--s4);color:#fff}
-.header-right{display:flex;align-items:center;gap:8px;margin-left:auto}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--dim)}
+.hright{display:flex;align-items:center;gap:8px;margin-left:auto}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--dim);flex-shrink:0}
 .sync-dot.live{background:var(--green);box-shadow:0 0 6px var(--green)}
 .sync-txt{font-size:11px;color:var(--muted)}
-.refresh-btn{background:var(--s3);border:1px solid var(--border2);color:var(--muted);font-size:11px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;transition:all .15s}
-.refresh-btn:hover{color:var(--text);border-color:var(--orange)}
-.refresh-btn svg{transition:transform .3s}
-.spinning svg{animation:spin .6s linear infinite}
+.rbtn{background:var(--s3);border:1px solid var(--border2);color:var(--muted);font-size:11px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;transition:all .15s}
+.rbtn:hover{color:var(--text);border-color:var(--orange)}
+.rbtn.spinning svg{animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.page{display:none;padding:20px}.page.active{display:block}
-
-/* QUEUE TABS */
-.queue-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto}
-.qtab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-size:12px;font-weight:600;padding:10px 16px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:6px;margin-bottom:-1px}
-.qtab:hover{color:var(--text)}
-.qtab.active{color:#fff;border-bottom-color:var(--qc,var(--orange))}
-.qtab .badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--s3)}
-.qtab.active .badge{background:var(--qc,var(--orange));color:#fff}
-
-/* JOB GRID */
-.job-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.job-card{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:border-color .15s,transform .1s;position:relative;overflow:hidden}
-.job-card:hover{border-color:var(--border2);transform:translateY(-1px)}
-.job-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--jc,var(--border2))}
-.job-num{font-family:monospace;font-size:10px;color:var(--dim);margin-bottom:4px}
-.job-co{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;line-height:1.3}
-.job-desc{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.4}
-.job-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
-.tag{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:3px}
-.job-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
-.job-due{font-size:10px;color:var(--muted)}
-.job-due.overdue{color:var(--red);font-weight:600}
-.job-due.soon{color:var(--yellow)}
-.job-amt{font-size:12px;font-weight:700;color:var(--orange)}
-.job-rep{font-size:10px;color:var(--dim);margin-top:6px;display:flex;align-items:center;gap:5px}
-.rep-av{width:16px;height:16px;border-radius:50%;background:var(--s4);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:var(--muted);flex-shrink:0}
-.empty{text-align:center;padding:40px;color:var(--dim);font-size:13px;grid-column:1/-1}
-
-/* TABLE */
-.tbl-wrap{background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:16px}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{text-align:left;padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);background:var(--s2)}
-td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
-tr:hover td{background:var(--s2);cursor:pointer}
-tr:last-child td{border-bottom:none}
-.mono{font-family:monospace;color:var(--muted)}
-
-/* TOOLBAR */
-.toolbar{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
-.search{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;font-size:12px;color:var(--text);font-family:'Inter',sans-serif;width:220px}
-.search::placeholder{color:var(--dim)}
-.search:focus{outline:none;border-color:var(--orange)}
-.rep-pill{background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
-.rep-pill:hover{border-color:var(--border2);color:var(--text)}
-.rep-pill.on{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
-.count-lbl{margin-left:auto;font-size:11px;color:var(--dim)}
+/* PAGES */
+.page{display:none;padding:20px;max-width:1400px;margin:0 auto}.page.active{display:block}
 
 /* STAT STRIP */
-.stat-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:20px}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:20px}
 .stat{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;position:relative;overflow:hidden}
 .stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--sc,var(--orange))}
 .stat-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
 .stat-val{font-size:24px;font-weight:800;color:#fff}
 .stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* QUEUE TABS */
+.qtabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto}
+.qtab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-size:12px;font-weight:600;padding:9px 14px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:6px;margin-bottom:-1px}
+.qtab:hover{color:var(--text)}
+.qtab.active{color:#fff;border-bottom-color:var(--qc,var(--orange))}
+.qbadge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--s3);color:var(--muted)}
+.qtab.active .qbadge{background:var(--qc,var(--orange));color:#fff}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.search{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;font-size:12px;color:var(--text);font-family:'Inter',sans-serif;width:240px}
+.search::placeholder{color:var(--dim)}
+.search:focus{outline:none;border-color:var(--orange)}
+.pill{background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.pill:hover{border-color:var(--border2);color:var(--text)}
+.pill.on{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
+.ml{margin-left:auto}
+.count{font-size:11px;color:var(--dim)}
+
+/* JOB GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.card{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:13px;cursor:pointer;transition:border-color .15s,transform .1s;position:relative;overflow:hidden}
+.card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cc,var(--border2))}
+.card-num{font-family:monospace;font-size:10px;color:var(--dim);margin-bottom:4px}
+.card-co{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;line-height:1.3}
+.card-desc{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.tag{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:3px}
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.card-due{font-size:10px;color:var(--muted)}
+.card-due.overdue{color:var(--red);font-weight:600}
+.card-due.soon{color:var(--yellow)}
+.card-amt{font-size:12px;font-weight:700;color:var(--orange)}
+.card-rep{font-size:10px;color:var(--dim);margin-top:6px;display:flex;align-items:center;gap:5px}
+.av{width:16px;height:16px;border-radius:50%;background:var(--s4);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:var(--muted);flex-shrink:0}
+.card-created{font-size:10px;color:var(--dim);margin-top:4px}
+.empty{text-align:center;padding:40px;color:var(--dim);font-size:13px;grid-column:1/-1;border:1px dashed var(--border);border-radius:8px}
+
+/* SUB TABS */
+.subtabs{display:flex;gap:4px;margin-bottom:16px}
+.stab{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.stab:hover{color:var(--text)}
+.stab.active{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
+
+/* TABLE */
+.tbl-wrap{background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);background:var(--s2);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.tbl-wrap tbody tr:hover td{background:var(--s2);cursor:pointer}
+.mono{font-family:monospace;color:var(--muted);font-size:11px}
+
+/* ESTIMATE BUCKETS */
+.bucket-section{margin-bottom:28px}
+.bucket-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.bucket-title{font-size:13px;font-weight:700;color:#fff}
+.bucket-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--s3);color:var(--muted)}
+.bucket-val{font-size:11px;color:var(--orange);font-weight:600;margin-left:auto}
+
+/* EST SUMMARY CARDS */
+.est-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+.est-stat{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.est-stat-val{font-size:22px;font-weight:800;color:#fff;margin-bottom:3px}
+.est-stat-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--dim)}
+.est-stat-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* CUSTOMER PAGE */
+.cust-layout{display:grid;grid-template-columns:320px 1fr;gap:16px;min-height:500px}
+.cust-list{background:var(--s2);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+.cust-search-wrap{padding:12px;border-bottom:1px solid var(--border)}
+.cust-items{overflow-y:auto;flex:1;max-height:calc(100vh - 200px)}
+.cust-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.cust-item:hover{background:var(--s3)}
+.cust-item.active{background:var(--orange-dim);border-left:2px solid var(--orange)}
+.cust-item:last-child{border-bottom:none}
+.cust-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:2px}
+.cust-meta{font-size:11px;color:var(--muted)}
+.cust-detail{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:20px;overflow-y:auto}
+.cust-detail-header{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.cust-detail-name{font-size:20px;font-weight:800;color:#fff;margin-bottom:6px}
+.cust-detail-meta{display:flex;gap:16px;flex-wrap:wrap}
+.cust-meta-item{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.cust-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.cust-stat{background:var(--s3);border-radius:6px;padding:12px;text-align:center}
+.cust-stat-val{font-size:18px;font-weight:800;color:#fff}
+.cust-stat-lbl{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-top:2px}
+.section-title{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.cust-jobs-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.cust-job-row{background:var(--s3);border-radius:6px;padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
+.cust-job-row:hover{background:var(--s4)}
+.cust-job-num{font-family:monospace;font-size:11px;color:var(--muted);width:70px;flex-shrink:0}
+.cust-job-desc{font-size:12px;color:var(--text);flex:1}
+.cust-job-status{font-size:10px;color:var(--muted)}
+.cust-job-amt{font-size:12px;font-weight:700;color:var(--orange);flex-shrink:0}
+.no-selection{display:flex;align-items:center;justify-content:center;height:100%;color:var(--dim);font-size:13px}
+
+/* REPORTS */
+.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.rc{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:20px}
+.rc-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.rc-big{font-size:28px;font-weight:900;color:#fff;line-height:1}
+.rc-sub{font-size:12px;color:var(--muted);margin-top:4px;margin-bottom:14px}
+.rc-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.rc-row:last-child{border-bottom:none}
 
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
@@ -99,7 +162,7 @@ tr:last-child td{border-bottom:none}
 .modal-top{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start}
 .modal-num{font-family:monospace;font-size:11px;color:var(--orange);margin-bottom:3px;font-weight:600}
 .modal-co{font-size:17px;font-weight:800}
-.modal-x{margin-left:auto;background:none;border:none;color:var(--dim);cursor:pointer;font-size:18px;line-height:1;padding:2px}
+.modal-x{margin-left:auto;background:none;border:none;color:var(--dim);cursor:pointer;font-size:18px;line-height:1}
 .modal-x:hover{color:var(--text)}
 .modal-body{padding:18px 22px}
 .m2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
@@ -117,80 +180,94 @@ tr:last-child td{border-bottom:none}
 .ring{width:32px;height:32px;border:3px solid var(--s3);border-top-color:var(--orange);border-radius:50%;animation:spin .6s linear infinite}
 .load-txt{font-size:13px;color:var(--muted)}
 
-/* REPORTS */
-.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-.report-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:20px}
-.rc-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
-.rc-big{font-size:30px;font-weight:900;color:#fff;line-height:1}
-.rc-sub{font-size:12px;color:var(--muted);margin-top:4px;margin-bottom:14px}
-.rc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
-.rc-row:last-child{border-bottom:none}
-
-@media(max-width:700px){.stat-strip{grid-template-columns:repeat(3,1fr)}.nav-tab{padding:5px 8px;font-size:10px}}
+@media(max-width:900px){.stats{grid-template-columns:repeat(3,1fr)}.cust-layout{grid-template-columns:1fr}.cust-items{max-height:200px}.est-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.nav-tab{padding:5px 8px;font-size:10px}}
 </style>
 </head>
 <body>
 
-<div class="loader" id="loader">
-  <div class="ring"></div>
-  <div class="load-txt" id="load-txt">Connecting to Corebridge...</div>
-</div>
+<div class="loader" id="loader"><div class="ring"></div><div class="load-txt" id="load-txt">Connecting to Corebridge...</div></div>
 
 <header>
   <div class="logo">FS</div>
   <div><div class="logo-title">FastSigns Eatontown</div><div class="logo-sub">Operations Hub</div></div>
-  <div class="header-center">
+  <div class="hcenter">
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="showPage('queues',this)">Queues</button>
       <button class="nav-tab" onclick="showPage('orders',this)">Orders</button>
       <button class="nav-tab" onclick="showPage('estimates',this)">Estimates</button>
+      <button class="nav-tab" onclick="showPage('customers',this)">Customers</button>
       <button class="nav-tab" onclick="showPage('reports',this)">Reports</button>
     </div>
   </div>
-  <div class="header-right">
+  <div class="hright">
     <div class="sync-dot" id="sync-dot"></div>
     <span class="sync-txt" id="sync-txt">Loading...</span>
-    <button class="refresh-btn" id="refresh-btn" onclick="loadAll()">
+    <button class="rbtn" id="refresh-btn" onclick="loadAll()">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Refresh
     </button>
   </div>
 </header>
 
-<!-- QUEUES PAGE -->
+<!-- QUEUES -->
 <div class="page active" id="page-queues">
-  <div class="stat-strip" id="stat-strip"></div>
-  <div class="queue-tabs" id="queue-tabs"></div>
+  <div class="stats" id="q-stats"></div>
+  <div class="qtabs" id="q-tabs"></div>
   <div class="toolbar">
-    <input class="search" placeholder="Search customer, order #, product..." oninput="setSearch(this.value)" id="q-search"/>
-    <div id="rep-btns"></div>
-    <span class="count-lbl" id="q-count"></span>
+    <input class="search" placeholder="Search customer, order #, product..." oninput="setSearch(this.value)"/>
+    <div id="rep-btns" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+    <span class="ml count" id="q-count"></span>
   </div>
-  <div class="job-grid" id="job-grid"></div>
+  <div class="grid" id="q-grid"></div>
 </div>
 
-<!-- ORDERS PAGE -->
+<!-- ORDERS -->
 <div class="page" id="page-orders">
+  <div class="subtabs">
+    <button class="stab active" onclick="setOrderTab('active',this)">Active Jobs</button>
+    <button class="stab" onclick="setOrderTab('completed',this)">Completed Jobs</button>
+  </div>
   <div class="toolbar">
-    <input class="search" placeholder="Search orders..." oninput="filterTbl('orders-body',this.value)"/>
+    <input class="search" placeholder="Search orders..." oninput="filterOrders(this.value)"/>
+    <span class="ml count" id="o-count"></span>
   </div>
   <div class="tbl-wrap">
-    <table><thead><tr><th>Order #</th><th>Customer</th><th>Description</th><th>Status</th><th>Due</th><th>Amount</th><th>Rep</th></tr></thead>
-    <tbody id="orders-body"></tbody></table>
+    <table>
+      <thead><tr><th>Order #</th><th>Customer</th><th>Description</th><th>Status</th><th>Due Date</th><th>Amount</th><th>Rep</th></tr></thead>
+      <tbody id="orders-body"></tbody>
+    </table>
   </div>
 </div>
 
-<!-- ESTIMATES PAGE -->
+<!-- ESTIMATES -->
 <div class="page" id="page-estimates">
+  <div class="est-summary" id="est-summary"></div>
   <div class="toolbar">
-    <input class="search" placeholder="Search estimates..." oninput="filterTbl('estimates-body',this.value)"/>
+    <input class="search" placeholder="Search estimates..." oninput="filterEstimates(this.value)" id="est-search"/>
+    <button class="pill on" onclick="setEstFilter('all',this)">All</button>
+    <button class="pill" onclick="setEstFilter('open',this)">Open</button>
+    <button class="pill" onclick="setEstFilter('dead',this)">Dead / Lost</button>
+    <span class="ml count" id="est-count"></span>
   </div>
-  <div class="tbl-wrap">
-    <table><thead><tr><th>Est #</th><th>Customer</th><th>Description</th><th>Status</th><th>Due</th><th>Amount</th><th>Rep</th></tr></thead>
-    <tbody id="estimates-body"></tbody></table>
+  <div id="est-buckets"></div>
+</div>
+
+<!-- CUSTOMERS -->
+<div class="page" id="page-customers">
+  <div class="cust-layout">
+    <div class="cust-list">
+      <div class="cust-search-wrap">
+        <input class="search" style="width:100%" placeholder="Search customers..." oninput="filterCustomers(this.value)"/>
+      </div>
+      <div class="cust-items" id="cust-items"></div>
+    </div>
+    <div class="cust-detail" id="cust-detail">
+      <div class="no-selection">← Select a customer to view details</div>
+    </div>
   </div>
 </div>
 
-<!-- REPORTS PAGE -->
+<!-- REPORTS -->
 <div class="page" id="page-reports">
   <div class="report-grid" id="report-grid"></div>
 </div>
@@ -213,12 +290,16 @@ tr:last-child td{border-bottom:none}
       </div>
       <div class="m2">
         <div class="mf"><label>Due Date</label><div class="v" id="m-due"></div></div>
-        <div class="mf"><label>Contact</label><div class="v" id="m-contact"></div></div>
+        <div class="mf"><label>Created</label><div class="v" id="m-created"></div></div>
       </div>
       <hr class="mdiv">
       <div class="m2">
+        <div class="mf"><label>Contact</label><div class="v" id="m-contact"></div></div>
         <div class="mf"><label>Email</label><div class="v" id="m-email"></div></div>
+      </div>
+      <div class="m2">
         <div class="mf"><label>Production</label><div class="v" id="m-type"></div></div>
+        <div class="mf"><label>Phone</label><div class="v" id="m-phone"></div></div>
       </div>
     </div>
     <div class="modal-acts">
@@ -231,374 +312,481 @@ tr:last-child td{border-bottom:none}
 
 <script>
 const PROXY = '/api/corebridge';
-let allOrders = [], allEstimates = [];
+let allOrders = [], allEstimates = [], allCompleted = [];
 let activeQueue = 'all', searchQ = '', activeRep = 'all';
+let activeOrderTab = 'active', orderSearch = '', estSearch = '', estFilter = 'all';
+let selectedCustomer = null;
 let currentItem = null;
+const today = new Date(); today.setHours(0,0,0,0);
 
-// ── QUEUE DEFINITIONS based on exact Corebridge status values ──
+// ── QUEUE DEFS ──
 const QUEUES = [
-  { id:'all',        name:'All Active',       color:'var(--orange)', filter: j => true },
-  { id:'sales',      name:'Sales Review',     color:'var(--pink)',   filter: j => j.cbStatus.includes('sales review') || j.cbStatus.includes('order review') || j.cbStatus === 'estimate : estimate' || j.cbStatus.includes('design needed') },
-  { id:'customer',   name:'Customer Action',  color:'var(--yellow)', filter: j => j.cbStatus.includes('awaiting customer') || j.cbStatus.includes('customer action') || j.cbStatus.includes('follow') || j.cbStatus.includes('awaiting proof') || j.cbStatus.includes('proof approved') },
-  { id:'design',     name:'In Design',        color:'var(--teal)',   filter: j => (j.cbStatus.includes('in design') && !j.cbStatus.includes('revision')) || j.cbStatus.includes('design review') || j.cbStatus.includes('quality control') },
-  { id:'revision',   name:'Design Revision',  color:'var(--orange)', filter: j => j.cbStatus.includes('revision') },
-  { id:'production', name:'In Production',    color:'var(--blue)',   filter: j => j.cbStatus.includes('in production') || (j.cbStatus.includes('wip') && !j.cbStatus.includes('design') && !j.cbStatus.includes('vend') && !j.cbStatus.includes('review') && !j.cbStatus.includes('customer') && !j.cbStatus.includes('proof') && !j.cbStatus.includes('built')) },
-  { id:'vended',     name:'Vended',           color:'var(--purple)', filter: j => j.isVended || j.cbStatus.includes('vend') },
-  { id:'built',      name:'Built / Ready',    color:'var(--green)',  filter: j => j.cbStatus.includes('built') || j.cbStatus.includes('awaiting installation') || j.cbStatus.includes('awaiting pickup') },
-  { id:'overdue',    name:'Overdue',          color:'var(--red)',    filter: j => j.isOverdue },
+  {id:'all',       name:'All Active',      color:'var(--orange)', f: j=>true},
+  {id:'sales',     name:'Sales Review',    color:'var(--pink)',   f: j=>j.cbS.includes('sales review')||j.cbS.includes('order review')||(j.cbS.includes('estimate')&&!j.cbS.includes('awaiting')&&!j.cbS.includes('approved')&&!j.cbS.includes('revision')&&!j.cbS.includes('cancelled')&&!j.cbS.includes('design'))},
+  {id:'customer',  name:'Customer Action', color:'var(--yellow)', f: j=>j.cbS.includes('awaiting customer')||j.cbS.includes('customer action')||j.cbS.includes('awaiting proof')||j.cbS.includes('proof approved')},
+  {id:'design',    name:'In Design',       color:'var(--teal)',   f: j=>(j.cbS.includes('in design')&&!j.cbS.includes('revision'))||j.cbS.includes('design review')||j.cbS.includes('quality control')},
+  {id:'revision',  name:'Design Revision', color:'var(--orange)', f: j=>j.cbS.includes('revision')},
+  {id:'production',name:'In Production',   color:'var(--blue)',   f: j=>j.cbS==='wip'||(j.cbS.includes('in production'))},
+  {id:'vended',    name:'Vended',          color:'var(--purple)', f: j=>j.isVended},
+  {id:'built',     name:'Built / Ready',   color:'var(--green)',  f: j=>j.cbS.includes('built')||j.cbS.includes('awaiting installation')||j.cbS.includes('awaiting pickup')},
+  {id:'overdue',   name:'Overdue',         color:'var(--red)',    f: j=>j.isOverdue},
 ];
 
 // ── HELPERS ──
-function parseDate(raw) {
-  if (!raw) return null;
-  if (typeof raw === 'object' && raw.DateText) raw = raw.DateText;
-  if (!raw) return null;
-  const d = new Date(raw);
-  return isNaN(d.getTime()) ? null : d;
+function parseDate(raw){
+  if(!raw) return null;
+  if(typeof raw==='object'&&raw.DateText) raw=raw.DateText;
+  if(!raw) return null;
+  const d=new Date(raw); return isNaN(d.getTime())?null:d;
 }
-
-function fmtDate(d) {
-  if (!d) return '—';
-  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-}
-
-function fmtAmt(n) {
-  if (!n || n === 0) return '';
-  return '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-
-function initials(name) {
-  return (name||'?').split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
-}
-
-function dueLbl(d, isBuilt) {
-  if (!d) return {txt:'No date',cls:''};
-  const today = new Date(); today.setHours(0,0,0,0);
-  const diff = Math.floor((d-today)/86400000);
-  if (diff < 0 && !isBuilt) return {txt:`${Math.abs(diff)}d overdue`,cls:'overdue'};
-  if (diff === 0) return {txt:'Due today',cls:'soon'};
-  if (diff <= 3) return {txt:`Due in ${diff}d`,cls:'soon'};
+function fmtDate(d){if(!d) return '—'; return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+function fmtAmt(n){if(!n||n===0) return ''; return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtAmtOrDash(n){return fmtAmt(n)||'—';}
+function initials(name){return (name||'?').split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();}
+function daysSince(d){if(!d) return 999; return Math.floor((today-d)/86400000);}
+function daysUntil(d){if(!d) return null; return Math.floor((d-today)/86400000);}
+function dueLbl(d,isBuilt){
+  if(!d) return {txt:'No date',cls:''};
+  const diff=daysUntil(d);
+  if(diff<0&&!isBuilt) return {txt:`${Math.abs(diff)}d overdue`,cls:'overdue'};
+  if(diff===0) return {txt:'Due today',cls:'soon'};
+  if(diff<=3) return {txt:`Due in ${diff}d`,cls:'soon'};
   return {txt:fmtDate(d),cls:''};
 }
 
 // ── MAP RECORD ──
-function mapRecord(item, type) {
-  const statusRaw = item.Status || '';
-  const cbStatus = statusRaw.toLowerCase();
-  const dueDate = parseDate(item.EstimateProjectedOrderDueDate) ||
-                  parseDate(item.OrderDueDate) ||
-                  parseDate(item.DueDate);
-  const today = new Date(); today.setHours(0,0,0,0);
-  const isBuilt = cbStatus.includes('built');
-  const isOverdue = dueDate && dueDate < today && !isBuilt;
+function mapRecord(item, type){
+  const statusRaw = item.Status||'';
+  const cbS = statusRaw.toLowerCase().trim();
+  const dueDate = parseDate(item.EstimateProjectedOrderDueDate)||parseDate(item.OrderDueDate)||parseDate(item.DueDate);
+  const createdDate = parseDate(item.DateCreated)||parseDate(item.DateConverted)||null;
+  const isBuilt = cbS.includes('built');
+  const isOverdue = dueDate&&dueDate<today&&!isBuilt;
+  const isVended = cbS.includes('vend')||(item.IsVended===true);
+  const ageDays = createdDate ? daysSince(createdDate) : null;
 
   return {
-    id: String(item.OrderId || item.EstimateId || item.Id || ''),
-    num: type === 'estimate'
-      ? (item.EstimateNumber ? `EST-${item.EstimateNumber}` : String(item.OrderId||''))
-      : String(item.OrderId||''),
-    customer: item.CompanyName || item.CustomerName || item.OrderContact || '—',
-    contact: item.OrderContact || item.EstimateContact || '',
-    email: item.OrderContactEmail || item.EstimateContactEmail || '',
-    phone: item.CompanyPhone || '',
-    description: item.OrderDescription || item.OrderText || item.EstimateText || '—',
+    id: String(item.OrderId||item.Id||''),
+    num: type==='estimate'&&item.EstimateNumber ? `EST-${item.EstimateNumber}` : String(item.OrderId||''),
+    customer: item.CompanyName||item.CustomerName||item.OrderContact||'—',
+    customerId: String(item.CustomerId||''),
+    contact: item.OrderContact||'',
+    email: item.OrderContactEmail||'',
+    phone: item.CompanyPhone||'',
+    description: item.OrderDescription||item.OrderText||'—',
     status: statusRaw,
-    cbStatus: cbStatus,
-    rep: item.OrderSalesPerson || item.OrderSalesPerson || item.SalespersonName || '—',
+    cbS,
+    rep: item.OrderSalesPerson||item.SalespersonName||'—',
     dueDate,
+    createdDate,
+    ageDays,
     amount: parseFloat(item.OrderSubTotal||item.OrderTotal||item.SubtotalAmount||0),
-    isVended: cbStatus.includes('vend'),
-    isBuilt,
-    isOverdue,
+    isVended, isBuilt, isOverdue,
     type,
+    isDead: ageDays!==null && ageDays>60,
   };
 }
 
 // ── FETCH ──
-async function apiFetch(endpoint, action, extraParams) {
-  let url = `${PROXY}?endpoint=${endpoint}`;
-  if (action) url += `&action=${action}`;
-  if (extraParams) url += `&${extraParams}`;
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`${endpoint}${action?'/'+action:''}: HTTP ${r.status}`);
-  const d = await r.json();
-  if (d && d.error) throw new Error(d.error);
-  return Array.isArray(d) ? d : [];
+async function apiFetch(endpoint, action, extra){
+  let url=`${PROXY}?endpoint=${endpoint}`;
+  if(action) url+=`&action=${action}`;
+  if(extra) url+=`&${extra}`;
+  const r=await fetch(url);
+  if(!r.ok) throw new Error(`${endpoint}${action?'/'+action:''}: HTTP ${r.status}`);
+  const d=await r.json();
+  if(d&&d.error) throw new Error(d.error);
+  return Array.isArray(d)?d:[];
 }
 
 // ── LOAD ALL ──
-async function loadAll() {
-  const btn = document.getElementById('refresh-btn');
+async function loadAll(){
+  const btn=document.getElementById('refresh-btn');
   btn.classList.add('spinning');
   showLoader('Connecting to Corebridge...');
-
-  allOrders = [];
-  allEstimates = [];
+  allOrders=[];allEstimates=[];allCompleted=[];
 
   try {
-    // Pull WIP + BUILT orders
-    for (const status of ['WIP','BUILT']) {
-      try {
-        const items = await apiFetch('ExOrder','GetOrdersByStatus',`listOfStatus=${status}`);
-        console.log(`${status}:`, items.length);
-        allOrders = allOrders.concat(items.map(i => mapRecord(i, 'order')));
-      } catch(e) { console.warn(status, e.message); }
+    // Active orders
+    for(const s of ['WIP','BUILT']){
+      try{
+        const items=await apiFetch('ExOrder','GetOrdersByStatus',`listOfStatus=${s}`);
+        console.log(`${s}:`,items.length);
+        allOrders=allOrders.concat(items.map(i=>mapRecord(i,'order')));
+      }catch(e){console.warn(s,e.message);}
     }
 
-    // Pull ESTIMATE orders — these are shown in both Queues (Customer Action, Sales Review)
-    // and the Estimates tab
-    try {
-      const estItems = await apiFetch('ExOrder','GetOrdersByStatus','listOfStatus=ESTIMATE');
-      console.log('ESTIMATE:', estItems.length);
-      allEstimates = estItems.map(i => mapRecord(i, 'estimate'));
-    } catch(e) { console.warn('ESTIMATE', e.message); }
+    // Estimates — all of them
+    try{
+      const items=await apiFetch('ExOrder','GetOrdersByStatus','listOfStatus=ESTIMATE');
+      console.log('ESTIMATE:',items.length);
+      allEstimates=items.map(i=>mapRecord(i,'estimate'));
+    }catch(e){console.warn('ESTIMATE',e.message);}
 
-    // Dedupe by ID
-    const seenO = new Set();
-    allOrders = allOrders.filter(j => { if (seenO.has(j.id)) return false; seenO.add(j.id); return true; });
+    // Completed orders
+    try{
+      const items=await apiFetch('ExOrder','GetOrdersByStatus','listOfStatus=CLOSED');
+      console.log('CLOSED:',items.length);
+      allCompleted=items.map(i=>mapRecord(i,'order'));
+    }catch(e){console.warn('CLOSED',e.message);}
 
-    console.log('Orders:', allOrders.length, '| Estimates:', allEstimates.length);
+    // Dedupe active orders
+    const seen=new Set();
+    allOrders=allOrders.filter(j=>{if(seen.has(j.id))return false;seen.add(j.id);return true;});
+
+    console.log('Orders:',allOrders.length,'| Estimates:',allEstimates.length,'| Completed:',allCompleted.length);
 
     renderAll();
     buildRepFilters();
+    buildCustomerList();
 
-    const now = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-    document.getElementById('sync-dot').className = 'sync-dot live';
-    document.getElementById('sync-txt').textContent = `Live · ${now}`;
-
-  } catch(err) {
-    console.error('Load failed:', err);
-    document.getElementById('sync-txt').textContent = 'Error: ' + err.message;
-  } finally {
+    const now=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('sync-dot').className='sync-dot live';
+    document.getElementById('sync-txt').textContent=`Live · ${now}`;
+  }catch(err){
+    console.error(err);
+    document.getElementById('sync-txt').textContent='Error: '+err.message;
+  }finally{
     hideLoader();
     btn.classList.remove('spinning');
   }
 }
 
-// ── RENDER ALL ──
-function renderAll() {
-  renderStats();
-  renderQueueTabs();
-  renderQueueGrid();
+function renderAll(){
+  renderQStats();
+  renderQTabs();
+  renderQGrid();
   renderOrdersTable();
-  renderEstimatesTable();
+  renderEstimates();
   renderReports();
 }
 
-// ── STATS ──
-function renderStats() {
-  const allItems = [...allOrders, ...allEstimates];
-  const wipCount = allOrders.filter(j=>j.cbStatus.includes('wip')||j.cbStatus.includes('in production')).length;
-  const overdueCount = allItems.filter(j=>j.isOverdue).length;
-  const vendedCount = allItems.filter(j=>j.isVended).length;
-  const builtCount = allOrders.filter(j=>j.isBuilt).length;
-  const totalVal = allOrders.reduce((s,j)=>s+j.amount,0);
-
-  document.getElementById('stat-strip').innerHTML = `
-    <div class="stat" style="--sc:var(--orange)">
-      <div class="stat-lbl">Total Active</div>
-      <div class="stat-val">${allOrders.length}</div>
-      <div class="stat-sub">Open orders</div>
-    </div>
-    <div class="stat" style="--sc:var(--yellow)">
-      <div class="stat-lbl">Estimates</div>
-      <div class="stat-val">${allEstimates.length}</div>
-      <div class="stat-sub">In pipeline</div>
-    </div>
-    <div class="stat" style="--sc:var(--blue)">
-      <div class="stat-lbl">In Production</div>
-      <div class="stat-val">${wipCount}</div>
-      <div class="stat-sub">WIP jobs</div>
-    </div>
-    <div class="stat" style="--sc:var(--purple)">
-      <div class="stat-lbl">Vended</div>
-      <div class="stat-val">${vendedCount}</div>
-      <div class="stat-sub">Outsourced</div>
-    </div>
-    <div class="stat" style="--sc:var(--green)">
-      <div class="stat-lbl">Built / Ready</div>
-      <div class="stat-val">${builtCount}</div>
-      <div class="stat-sub">Awaiting pickup/install</div>
-    </div>
-    <div class="stat" style="--sc:var(--red)">
-      <div class="stat-lbl">Overdue</div>
-      <div class="stat-val">${overdueCount}</div>
-      <div class="stat-sub">Past due date</div>
-    </div>`;
+// ── QUEUE STATS ──
+function renderQStats(){
+  const all=[...allOrders,...allEstimates];
+  const counts={
+    total:allOrders.length,
+    est:allEstimates.length,
+    wip:allOrders.filter(j=>j.cbS.includes('wip')||j.cbS.includes('production')).length,
+    vended:all.filter(j=>j.isVended).length,
+    built:allOrders.filter(j=>j.isBuilt).length,
+    overdue:all.filter(j=>j.isOverdue).length,
+  };
+  document.getElementById('q-stats').innerHTML=`
+    <div class="stat" style="--sc:var(--orange)"><div class="stat-lbl">Active Orders</div><div class="stat-val">${counts.total}</div><div class="stat-sub">WIP + Built</div></div>
+    <div class="stat" style="--sc:var(--yellow)"><div class="stat-lbl">Estimates</div><div class="stat-val">${counts.est}</div><div class="stat-sub">In pipeline</div></div>
+    <div class="stat" style="--sc:var(--blue)"><div class="stat-lbl">In Production</div><div class="stat-val">${counts.wip}</div><div class="stat-sub">WIP jobs</div></div>
+    <div class="stat" style="--sc:var(--purple)"><div class="stat-lbl">Vended</div><div class="stat-val">${counts.vended}</div><div class="stat-sub">Outsourced</div></div>
+    <div class="stat" style="--sc:var(--green)"><div class="stat-lbl">Built / Ready</div><div class="stat-val">${counts.built}</div><div class="stat-sub">Awaiting pickup/install</div></div>
+    <div class="stat" style="--sc:var(--red)"><div class="stat-lbl">Overdue</div><div class="stat-val">${counts.overdue}</div><div class="stat-sub">Past due date</div></div>`;
 }
 
 // ── QUEUE TABS ──
-function renderQueueTabs() {
-  const allItems = [...allOrders, ...allEstimates];
-  document.getElementById('queue-tabs').innerHTML = QUEUES.map(q => {
-    const count = q.id === 'all' ? allItems.length : allItems.filter(q.filter).length;
+function renderQTabs(){
+  const all=[...allOrders,...allEstimates];
+  document.getElementById('q-tabs').innerHTML=QUEUES.map(q=>{
+    const cnt=q.id==='all'?all.length:all.filter(q.f).length;
     return `<button class="qtab ${q.id===activeQueue?'active':''}" style="--qc:${q.color}" onclick="setQueue('${q.id}')">
-      ${q.name} <span class="badge">${count}</span>
-    </button>`;
+      ${q.name}<span class="qbadge">${cnt}</span></button>`;
   }).join('');
 }
 
 // ── QUEUE GRID ──
-function renderQueueGrid() {
-  const q = QUEUES.find(q=>q.id===activeQueue);
-  let items = [...allOrders, ...allEstimates].filter(q.filter);
+function renderQGrid(){
+  const q=QUEUES.find(q=>q.id===activeQueue);
+  let items=[...allOrders,...allEstimates].filter(q.f);
+  if(searchQ){const s=searchQ.toLowerCase();items=items.filter(j=>j.customer.toLowerCase().includes(s)||j.num.toLowerCase().includes(s)||j.description.toLowerCase().includes(s));}
+  if(activeRep!=='all') items=items.filter(j=>j.rep===activeRep);
+  document.getElementById('q-count').textContent=`${items.length} item${items.length!==1?'s':''}`;
+  if(!items.length){document.getElementById('q-grid').innerHTML=`<div class="empty">No items in this queue</div>`;return;}
+  document.getElementById('q-grid').innerHTML=items.map(j=>jobCard(j,q.color)).join('');
+}
 
-  if (searchQ) {
-    const s = searchQ.toLowerCase();
-    items = items.filter(j => j.customer.toLowerCase().includes(s) || j.num.toLowerCase().includes(s) || j.description.toLowerCase().includes(s));
-  }
-  if (activeRep !== 'all') {
-    items = items.filter(j => j.rep === activeRep);
-  }
+function jobCard(j,color){
+  const due=dueLbl(j.dueDate,j.isBuilt);
+  const amt=fmtAmt(j.amount);
+  const typTag=j.isVended
+    ?`<span class="tag" style="background:rgba(168,85,247,.15);color:#C084FC">Outsourced</span>`
+    :`<span class="tag" style="background:rgba(59,130,246,.15);color:#60A5FA">In-House</span>`;
+  const estTag=j.type==='estimate'?`<span class="tag" style="background:rgba(255,184,0,.15);color:#FFB800">Estimate</span>`:'';
+  const overdueTag=j.isOverdue?`<span class="tag" style="background:rgba(255,68,68,.15);color:#FF6B6B">Overdue</span>`:'';
+  const deadTag=j.isDead?`<span class="tag" style="background:rgba(100,100,100,.2);color:#888">Dead/Lost</span>`:'';
+  return `<div class="card" style="--cc:${color}" onclick="openModal('${j.id}','${j.type}')">
+    <div class="card-num">${j.num}</div>
+    <div class="card-co">${j.customer}</div>
+    <div class="card-desc">${j.description}</div>
+    <div class="card-tags">${typTag}${estTag}${overdueTag}${deadTag}</div>
+    <div class="card-foot">
+      <span class="card-due ${due.cls}">${due.txt}</span>
+      ${amt?`<span class="card-amt">${amt}</span>`:''}
+    </div>
+    <div class="card-rep"><div class="av">${initials(j.rep)}</div>${j.rep}</div>
+    ${j.createdDate?`<div class="card-created">Created: ${fmtDate(j.createdDate)}</div>`:''}
+  </div>`;
+}
 
-  document.getElementById('q-count').textContent = `${items.length} item${items.length!==1?'s':''}`;
+// ── ORDERS TABLE ──
+function renderOrdersTable(){
+  const items=activeOrderTab==='active'?allOrders:allCompleted;
+  let filtered=items;
+  if(orderSearch){const s=orderSearch.toLowerCase();filtered=filtered.filter(j=>j.customer.toLowerCase().includes(s)||j.num.toLowerCase().includes(s)||j.description.toLowerCase().includes(s));}
+  document.getElementById('o-count').textContent=`${filtered.length} order${filtered.length!==1?'s':''}`;
+  document.getElementById('orders-body').innerHTML=filtered.length===0
+    ?`<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:30px">${activeOrderTab==='active'?'No active orders':'No completed orders found'}</td></tr>`
+    :filtered.map(j=>`<tr onclick="openModal('${j.id}','order')">
+      <td class="mono">${j.num}</td>
+      <td><strong>${j.customer}</strong></td>
+      <td style="color:var(--muted)">${j.description}</td>
+      <td style="font-size:11px">${j.status}</td>
+      <td class="mono">${fmtDate(j.dueDate)}</td>
+      <td style="color:var(--orange);font-weight:700">${fmtAmt(j.amount)}</td>
+      <td style="color:var(--muted)">${j.rep}</td>
+    </tr>`).join('');
+}
 
-  if (items.length === 0) {
-    document.getElementById('job-grid').innerHTML = `<div class="empty">No items in this queue</div>`;
-    return;
-  }
+// ── ESTIMATES ──
+function renderEstimates(){
+  // Summary stats
+  const open=allEstimates.filter(e=>!e.isDead);
+  const dead=allEstimates.filter(e=>e.isDead);
+  const converted=allCompleted.filter(j=>j.type==='order').length;
+  const totalOpen=open.reduce((s,e)=>s+e.amount,0);
+  const convRate=allEstimates.length>0?Math.round((converted/(allEstimates.length+converted))*100):0;
 
-  const color = q.color;
-  document.getElementById('job-grid').innerHTML = items.map(j => {
-    const due = dueLbl(j.dueDate, j.isBuilt);
-    const amt = fmtAmt(j.amount);
-    const typTag = j.isVended
-      ? `<span class="tag" style="background:rgba(168,85,247,.15);color:#C084FC">Outsourced</span>`
-      : `<span class="tag" style="background:rgba(59,130,246,.15);color:#60A5FA">In-House</span>`;
-    const estTag = j.type === 'estimate'
-      ? `<span class="tag" style="background:rgba(255,184,0,.15);color:#FFB800">Estimate</span>` : '';
-    const overdueTag = j.isOverdue
-      ? `<span class="tag" style="background:rgba(255,68,68,.15);color:#FF6B6B">Overdue</span>` : '';
+  document.getElementById('est-summary').innerHTML=`
+    <div class="est-stat"><div class="est-stat-val">${allEstimates.length}</div><div class="est-stat-lbl">Total Estimates</div><div class="est-stat-sub">All time</div></div>
+    <div class="est-stat"><div class="est-stat-val" style="color:var(--orange)">${fmtAmt(totalOpen)||'$0'}</div><div class="est-stat-lbl">Open Value</div><div class="est-stat-sub">Potential revenue</div></div>
+    <div class="est-stat"><div class="est-stat-val" style="color:var(--red)">${dead.length}</div><div class="est-stat-lbl">Dead / Lost</div><div class="est-stat-sub">Over 60 days old</div></div>
+    <div class="est-stat"><div class="est-stat-val" style="color:var(--green)">${convRate}%</div><div class="est-stat-lbl">Conversion Rate</div><div class="est-stat-sub">Est → Job</div></div>`;
 
-    return `<div class="job-card" style="--jc:${color}" onclick="openModal('${j.id}','${j.type}')">
-      <div class="job-num">${j.num}</div>
-      <div class="job-co">${j.customer}</div>
-      <div class="job-desc">${j.description}</div>
-      <div class="job-tags">${typTag}${estTag}${overdueTag}</div>
-      <div class="job-foot">
-        <span class="job-due ${due.cls}">${due.txt}</span>
-        ${amt?`<span class="job-amt">${amt}</span>`:''}
+  // Filter estimates
+  let ests=allEstimates;
+  if(estFilter==='open') ests=ests.filter(e=>!e.isDead);
+  if(estFilter==='dead') ests=ests.filter(e=>e.isDead);
+  if(estSearch){const s=estSearch.toLowerCase();ests=ests.filter(e=>e.customer.toLowerCase().includes(s)||e.num.toLowerCase().includes(s)||e.description.toLowerCase().includes(s));}
+  document.getElementById('est-count').textContent=`${ests.length} estimate${ests.length!==1?'s':''}`;
+
+  // Age buckets
+  const buckets=[
+    {label:'This Week',     color:'var(--green)',  items:ests.filter(e=>e.ageDays!==null&&e.ageDays<=7)},
+    {label:'Last Week',     color:'var(--teal)',   items:ests.filter(e=>e.ageDays!==null&&e.ageDays>7&&e.ageDays<=14)},
+    {label:'2–3 Weeks Ago', color:'var(--yellow)', items:ests.filter(e=>e.ageDays!==null&&e.ageDays>14&&e.ageDays<=21)},
+    {label:'3–4 Weeks Ago', color:'var(--orange)', items:ests.filter(e=>e.ageDays!==null&&e.ageDays>21&&e.ageDays<=30)},
+    {label:'1–2 Months Ago',color:'var(--red)',    items:ests.filter(e=>e.ageDays!==null&&e.ageDays>30&&e.ageDays<=60)},
+    {label:'Dead / Lost',   color:'var(--dim)',    items:ests.filter(e=>e.isDead||e.ageDays===null)},
+  ];
+
+  document.getElementById('est-buckets').innerHTML=buckets.filter(b=>b.items.length>0).map(b=>{
+    const bucketVal=b.items.reduce((s,e)=>s+e.amount,0);
+    return `<div class="bucket-section">
+      <div class="bucket-header">
+        <div style="width:8px;height:8px;border-radius:50%;background:${b.color};flex-shrink:0"></div>
+        <div class="bucket-title">${b.label}</div>
+        <div class="bucket-badge">${b.items.length}</div>
+        ${bucketVal>0?`<div class="bucket-val">${fmtAmt(bucketVal)}</div>`:''}
       </div>
-      <div class="job-rep"><div class="rep-av">${initials(j.rep)}</div>${j.rep}</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Est #</th><th>Customer</th><th>Description</th><th>Status</th><th>Created</th><th>Due</th><th>Amount</th><th>Rep</th></tr></thead>
+          <tbody>${b.items.map(e=>`<tr onclick="openModal('${e.id}','estimate')">
+            <td class="mono">${e.num}</td>
+            <td><strong>${e.customer}</strong></td>
+            <td style="color:var(--muted)">${e.description}</td>
+            <td style="font-size:11px">${e.status}</td>
+            <td class="mono">${fmtDate(e.createdDate)}</td>
+            <td class="mono">${fmtDate(e.dueDate)}</td>
+            <td style="color:var(--orange);font-weight:700">${fmtAmt(e.amount)}</td>
+            <td style="color:var(--muted)">${e.rep}</td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>
     </div>`;
-  }).join('');
+  }).join('')||`<div class="empty" style="display:block">No estimates found</div>`;
 }
 
-// ── TABLES ──
-function renderOrdersTable() {
-  document.getElementById('orders-body').innerHTML = allOrders.length === 0
-    ? `<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:30px">No orders</td></tr>`
-    : allOrders.map(j=>`<tr onclick="openModal('${j.id}','order')">
-        <td class="mono">${j.num}</td>
-        <td><strong>${j.customer}</strong></td>
-        <td style="color:var(--muted)">${j.description}</td>
-        <td style="font-size:11px">${j.status}</td>
-        <td class="mono" style="color:var(--muted)">${fmtDate(j.dueDate)}</td>
-        <td style="color:var(--orange);font-weight:700">${fmtAmt(j.amount)}</td>
-        <td style="color:var(--muted)">${j.rep}</td>
-      </tr>`).join('');
-}
-
-function renderEstimatesTable() {
-  document.getElementById('estimates-body').innerHTML = allEstimates.length === 0
-    ? `<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:30px">No estimates loaded</td></tr>`
-    : allEstimates.map(j=>`<tr onclick="openModal('${j.id}','estimate')">
-        <td class="mono">${j.num}</td>
-        <td><strong>${j.customer}</strong></td>
-        <td style="color:var(--muted)">${j.description}</td>
-        <td style="font-size:11px">${j.status}</td>
-        <td class="mono" style="color:var(--muted)">${fmtDate(j.dueDate)}</td>
-        <td style="color:var(--orange);font-weight:700">${fmtAmt(j.amount)}</td>
-        <td style="color:var(--muted)">${j.rep}</td>
-      </tr>`).join('');
-}
-
-function filterTbl(tbodyId, q) {
-  document.querySelectorAll(`#${tbodyId} tr`).forEach(r=>{
-    r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+// ── CUSTOMERS ──
+function buildCustomerList(){
+  // Build customer index from all records
+  const custMap={};
+  [...allOrders,...allEstimates,...allCompleted].forEach(j=>{
+    const key=j.customer;
+    if(!custMap[key]) custMap[key]={
+      name:j.customer, phone:j.phone, email:j.email, contact:j.contact,
+      orders:[], estimates:[], completed:[], totalRevenue:0
+    };
+    if(j.type==='order'&&!j.isBuilt&&allCompleted.find(c=>c.id===j.id)===undefined) custMap[key].orders.push(j);
+    else if(j.type==='estimate') custMap[key].estimates.push(j);
+    else custMap[key].completed.push(j);
+    if(j.type==='order') custMap[key].totalRevenue+=j.amount;
   });
+
+  window._custMap=custMap;
+  renderCustomerList(Object.values(custMap).sort((a,b)=>a.name.localeCompare(b.name)));
+}
+
+function renderCustomerList(custs){
+  document.getElementById('cust-items').innerHTML=custs.length===0
+    ?`<div style="padding:20px;text-align:center;color:var(--dim);font-size:12px">No customers found</div>`
+    :custs.map(c=>`<div class="cust-item" onclick="selectCustomer('${encodeURIComponent(c.name)}')">
+        <div class="cust-name">${c.name}</div>
+        <div class="cust-meta">${c.orders.length} active · ${c.estimates.length} est · ${fmtAmt(c.totalRevenue)||'$0'}</div>
+      </div>`).join('');
+}
+
+function filterCustomers(q){
+  const custs=Object.values(window._custMap||{}).filter(c=>c.name.toLowerCase().includes(q.toLowerCase())).sort((a,b)=>a.name.localeCompare(b.name));
+  renderCustomerList(custs);
+}
+
+function selectCustomer(encodedName){
+  const name=decodeURIComponent(encodedName);
+  const c=(window._custMap||{})[name];
+  if(!c) return;
+  selectedCustomer=name;
+
+  // Highlight active item
+  document.querySelectorAll('.cust-item').forEach(el=>{
+    el.classList.toggle('active', el.querySelector('.cust-name')?.textContent===name);
+  });
+
+  const allJobs=[...c.orders,...c.completed];
+  const totalVal=allJobs.reduce((s,j)=>s+j.amount,0);
+
+  document.getElementById('cust-detail').innerHTML=`
+    <div class="cust-detail-header">
+      <div class="cust-detail-name">${c.name}</div>
+      <div class="cust-detail-meta">
+        ${c.contact?`<div class="cust-meta-item">👤 ${c.contact}</div>`:''}
+        ${c.email?`<div class="cust-meta-item">✉️ <a href="mailto:${c.email}" style="color:var(--orange)">${c.email}</a></div>`:''}
+        ${c.phone?`<div class="cust-meta-item">📞 ${c.phone}</div>`:''}
+      </div>
+    </div>
+    <div class="cust-stats">
+      <div class="cust-stat"><div class="cust-stat-val">${allJobs.length}</div><div class="cust-stat-lbl">Total Jobs</div></div>
+      <div class="cust-stat"><div class="cust-stat-val">${c.estimates.length}</div><div class="cust-stat-lbl">Estimates</div></div>
+      <div class="cust-stat"><div class="cust-stat-val" style="color:var(--orange)">${fmtAmt(totalVal)||'$0'}</div><div class="cust-stat-lbl">Total Revenue</div></div>
+    </div>
+    ${c.orders.length>0?`
+      <div class="section-title">Active Orders</div>
+      <div class="cust-jobs-list">${c.orders.map(j=>`
+        <div class="cust-job-row" onclick="openModal('${j.id}','order')">
+          <div class="cust-job-num">${j.num}</div>
+          <div><div class="cust-job-desc">${j.description}</div><div class="cust-job-status">${j.status}</div></div>
+          <div class="cust-job-amt">${fmtAmt(j.amount)}</div>
+        </div>`).join('')}</div>`:''}
+    ${c.estimates.length>0?`
+      <div class="section-title">Estimates</div>
+      <div class="cust-jobs-list">${c.estimates.map(e=>`
+        <div class="cust-job-row" onclick="openModal('${e.id}','estimate')">
+          <div class="cust-job-num">${e.num}</div>
+          <div><div class="cust-job-desc">${e.description}</div><div class="cust-job-status">${e.status} · Created ${fmtDate(e.createdDate)}</div></div>
+          <div class="cust-job-amt">${fmtAmt(e.amount)}</div>
+        </div>`).join('')}</div>`:''}
+    ${c.completed.length>0?`
+      <div class="section-title">Past Jobs</div>
+      <div class="cust-jobs-list">${c.completed.map(j=>`
+        <div class="cust-job-row" onclick="openModal('${j.id}','order')">
+          <div class="cust-job-num">${j.num}</div>
+          <div><div class="cust-job-desc">${j.description}</div><div class="cust-job-status">${j.status}</div></div>
+          <div class="cust-job-amt">${fmtAmt(j.amount)}</div>
+        </div>`).join('')}</div>`:''}
+    ${allJobs.length===0&&c.estimates.length===0?'<div style="color:var(--dim);font-size:13px">No job history found</div>':''}`;
 }
 
 // ── REPORTS ──
-function renderReports() {
-  const allItems = [...allOrders, ...allEstimates];
-  const totalWIP = allOrders.reduce((s,j)=>s+j.amount,0);
-  const byRep = {};
-  allOrders.forEach(j=>{ if(!byRep[j.rep]) byRep[j.rep]={count:0,amt:0}; byRep[j.rep].count++; byRep[j.rep].amt+=j.amount; });
-  const overdue = allItems.filter(j=>j.isOverdue);
+function renderReports(){
+  const allActive=[...allOrders,...allEstimates];
+  const wipVal=allOrders.reduce((s,j)=>s+j.amount,0);
+  const estVal=allEstimates.filter(e=>!e.isDead).reduce((s,e)=>s+e.amount,0);
+  const byRep={};
+  allOrders.forEach(j=>{if(!byRep[j.rep])byRep[j.rep]={count:0,amt:0};byRep[j.rep].count++;byRep[j.rep].amt+=j.amount;});
+  const overdue=allActive.filter(j=>j.isOverdue);
 
-  document.getElementById('report-grid').innerHTML = `
-    <div class="report-card">
-      <div class="rc-title">WIP Summary</div>
-      <div class="rc-big">${fmtAmt(totalWIP)}</div>
-      <div class="rc-sub">Total active order value</div>
+  document.getElementById('report-grid').innerHTML=`
+    <div class="rc">
+      <div class="rc-title">Production Summary</div>
+      <div class="rc-big">${fmtAmt(wipVal)||'$0'}</div>
+      <div class="rc-sub">Active WIP value</div>
       ${QUEUES.filter(q=>q.id!=='all'&&q.id!=='overdue').map(q=>{
-        const cnt = allOrders.filter(q.filter).length;
+        const cnt=allOrders.filter(q.f).length;
         return cnt>0?`<div class="rc-row"><span style="color:var(--muted)">${q.name}</span><span style="font-weight:700">${cnt}</span></div>`:'';
       }).join('')}
     </div>
-    <div class="report-card">
+    <div class="rc">
       <div class="rc-title">By Sales Rep</div>
       ${Object.entries(byRep).sort((a,b)=>b[1].amt-a[1].amt).map(([rep,d])=>`
         <div class="rc-row">
-          <span style="font-weight:600">${rep}</span>
+          <span style="font-weight:600">${rep.split(' ')[0]}</span>
           <div style="text-align:right">
             <div style="color:var(--orange);font-weight:700">${fmtAmt(d.amt)}</div>
             <div style="font-size:10px;color:var(--dim)">${d.count} order${d.count!==1?'s':''}</div>
           </div>
         </div>`).join('')}
     </div>
-    <div class="report-card">
-      <div class="rc-title">Pipeline</div>
-      <div class="rc-big">${allEstimates.length}</div>
-      <div class="rc-sub">Open estimates</div>
-      <div class="rc-big" style="color:var(--red);margin-top:16px">${overdue.length}</div>
-      <div class="rc-sub">Overdue items</div>
+    <div class="rc">
+      <div class="rc-title">Estimate Pipeline</div>
+      <div class="rc-big" style="color:var(--yellow)">${fmtAmt(estVal)||'$0'}</div>
+      <div class="rc-sub">Open estimate value</div>
+      <div class="rc-row"><span style="color:var(--muted)">Total estimates</span><span style="font-weight:700">${allEstimates.length}</span></div>
+      <div class="rc-row"><span style="color:var(--muted)">Dead / Lost</span><span style="font-weight:700;color:var(--red)">${allEstimates.filter(e=>e.isDead).length}</span></div>
+      <div class="rc-row"><span style="color:var(--muted)">Overdue items</span><span style="font-weight:700;color:var(--red)">${overdue.length}</span></div>
     </div>`;
 }
 
 // ── MODAL ──
-function openModal(id, type) {
-  const all = [...allOrders, ...allEstimates];
-  currentItem = all.find(j=>j.id===id&&j.type===type) || all.find(j=>j.id===id);
-  if (!currentItem) return;
-  const j = currentItem;
-  document.getElementById('m-num').textContent = j.num;
-  document.getElementById('m-co').textContent = j.customer;
-  document.getElementById('m-desc').textContent = j.description;
-  document.getElementById('m-amt').textContent = fmtAmt(j.amount)||'—';
-  document.getElementById('m-status').textContent = j.status||'—';
-  document.getElementById('m-rep').textContent = j.rep||'—';
-  document.getElementById('m-due').textContent = fmtDate(j.dueDate);
-  document.getElementById('m-contact').textContent = j.contact||'—';
-  document.getElementById('m-email').textContent = j.email||'—';
-  document.getElementById('m-type').textContent = j.isVended?'🏭 Outsourced':'🏠 In-House';
+function openModal(id, type){
+  const all=[...allOrders,...allEstimates,...allCompleted];
+  currentItem=all.find(j=>j.id===id&&j.type===type)||all.find(j=>j.id===id);
+  if(!currentItem) return;
+  const j=currentItem;
+  document.getElementById('m-num').textContent=j.num;
+  document.getElementById('m-co').textContent=j.customer;
+  document.getElementById('m-desc').textContent=j.description;
+  document.getElementById('m-amt').textContent=fmtAmtOrDash(j.amount);
+  document.getElementById('m-status').textContent=j.status||'—';
+  document.getElementById('m-rep').textContent=j.rep||'—';
+  document.getElementById('m-due').textContent=fmtDate(j.dueDate);
+  document.getElementById('m-created').textContent=fmtDate(j.createdDate);
+  document.getElementById('m-contact').textContent=j.contact||'—';
+  document.getElementById('m-email').textContent=j.email||'—';
+  document.getElementById('m-type').textContent=j.isVended?'🏭 Outsourced':'🏠 In-House';
+  document.getElementById('m-phone').textContent=j.phone||'—';
   document.getElementById('modal').classList.add('open');
 }
-function closeModal(){ document.getElementById('modal').classList.remove('open'); currentItem=null; }
-function copyNum(){ if(currentItem) navigator.clipboard.writeText(currentItem.num).then(()=>alert('Copied: '+currentItem.num)); }
-function findInstaller(){ window.open('https://www.google.com/search?q=sign+installer+near+Eatontown+NJ','_blank'); }
-function findVendor(){ if(currentItem) window.open(`https://www.google.com/search?q=${encodeURIComponent(currentItem.description+' sign wholesale vendor')},'_blank`); }
+function closeModal(){document.getElementById('modal').classList.remove('open');currentItem=null;}
+function copyNum(){if(currentItem)navigator.clipboard.writeText(currentItem.num).then(()=>alert('Copied: '+currentItem.num));}
+function findInstaller(){window.open('https://www.google.com/search?q=sign+installer+near+Eatontown+NJ','_blank');}
+function findVendor(){if(currentItem)window.open(`https://www.google.com/search?q=${encodeURIComponent(currentItem.description+' sign wholesale vendor')},'_blank`);}
 
 // ── FILTERS ──
-function setQueue(id) {
-  activeQueue = id;
-  renderQueueTabs();
-  renderQueueGrid();
+function setQueue(id){activeQueue=id;renderQTabs();renderQGrid();}
+function setSearch(q){searchQ=q;renderQGrid();}
+function setOrderTab(tab,btn){
+  activeOrderTab=tab;
+  document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrdersTable();
 }
-function setSearch(q){ searchQ=q; renderQueueGrid(); }
+function filterOrders(q){orderSearch=q;renderOrdersTable();}
+function filterEstimates(q){estSearch=q;renderEstimates();}
+function setEstFilter(f,btn){
+  estFilter=f;
+  document.querySelectorAll('#page-estimates .pill').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderEstimates();
+}
 function buildRepFilters(){
   const reps=[...new Set(allOrders.map(j=>j.rep).filter(Boolean))].sort();
   if(reps.length<2) return;
-  document.getElementById('rep-btns').innerHTML =
-    `<button class="rep-pill on" onclick="setRep('all',this)">All Reps</button>` +
-    reps.map(r=>`<button class="rep-pill" onclick="setRep('${r}',this)" style="margin-left:4px">${r.split(' ')[0]}</button>`).join('');
+  document.getElementById('rep-btns').innerHTML=
+    `<button class="pill on" onclick="setRep('all',this)">All</button>`+
+    reps.map(r=>`<button class="pill" onclick="setRep('${r}',this)">${r.split(' ')[0]}</button>`).join('');
 }
 function setRep(rep,btn){
   activeRep=rep;
-  document.querySelectorAll('.rep-pill').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('#rep-btns .pill').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  renderQueueGrid();
+  renderQGrid();
 }
 
 // ── PAGE NAV ──
@@ -610,8 +798,8 @@ function showPage(name,btn){
 }
 
 // ── LOADER ──
-function showLoader(t){ document.getElementById('loader').classList.add('open'); document.getElementById('load-txt').textContent=t; }
-function hideLoader(){ document.getElementById('loader').classList.remove('open'); }
+function showLoader(t){document.getElementById('loader').classList.add('open');document.getElementById('load-txt').textContent=t;}
+function hideLoader(){document.getElementById('loader').classList.remove('open');}
 
 window.addEventListener('DOMContentLoaded', loadAll);
 </script>
