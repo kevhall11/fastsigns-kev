@@ -1,14 +1,15 @@
 // Vercel Serverless Function — Corebridge API Proxy
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const API_KEY = '3e6ed1d8-a81a-4fbb-9fbe-f33dff30ad6d';
   const BASE_URL = 'https://fs2498.v2api.corebridge.net/api/public';
 
-  // Support both ?endpoint=ExOrder and ?endpoint=ExOrderProduct&action=GetExOrderProductByOrderStatus
+  // endpoint = base (e.g. ExOrder)
+  // action = sub-path (e.g. GetOrdersByStatus)
   const endpoint = req.query.endpoint || 'ExOrder';
   const action = req.query.action || '';
 
@@ -23,28 +24,31 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Build extra query params — exclude our own routing params
     const params = Object.assign({}, req.query);
     delete params.endpoint;
     delete params.action;
     const qs = new URLSearchParams(params).toString();
-
-    // Build full URL — append action as sub-path if provided
     const path = action ? `${endpoint}/${action}` : endpoint;
     const url = `${BASE_URL}/${path}${qs ? '?' + qs : ''}`;
 
     console.log('Proxying to:', url);
 
-    const response = await fetch(url, {
-      method: 'GET',
+    const fetchOptions = {
+      method: req.method === 'POST' ? 'POST' : 'GET',
       headers: {
         'Authorization': `BASIC ${API_KEY}`,
         'ApiTag': API_KEY,
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       }
-    });
+    };
 
+    // Forward POST body if present
+    if (req.method === 'POST' && req.body) {
+      fetchOptions.body = JSON.stringify(req.body);
+    }
+
+    const response = await fetch(url, fetchOptions);
     const text = await response.text();
     console.log('Status:', response.status, '| Preview:', text.substring(0, 200));
 
