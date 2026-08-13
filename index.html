@@ -5,27 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FastSigns Eatontown</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --orange:#FF6B00;--orange-dim:rgba(255,107,0,0.1);--orange-glow:rgba(255,107,0,0.2);
+  --orange:#FF6B00;--orange-dim:rgba(255,107,0,0.1);
   --bg:#0A0A0B;--s1:#111113;--s2:#18181B;--s3:#222226;--s4:#2A2A2F;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
   --text:#EDEDF0;--muted:#8888A0;--dim:#444455;
-  --red:#FF3B3B;--red-dim:rgba(255,59,59,0.1);
-  --yellow:#FFB800;--yellow-dim:rgba(255,184,0,0.1);
-  --green:#00D26A;--green-dim:rgba(0,210,106,0.1);
-  --blue:#3B82F6;--blue-dim:rgba(59,130,246,0.1);
-  --purple:#A855F7;--purple-dim:rgba(168,85,247,0.1);
-  --teal:#06B6D4;--teal-dim:rgba(6,182,212,0.1);
-  --pink:#EC4899;--pink-dim:rgba(236,72,153,0.1);
+  --red:#FF4444;--yellow:#FFB800;--green:#00D26A;
+  --blue:#3B82F6;--purple:#A855F7;--teal:#06B6D4;--pink:#EC4899;
 }
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
 
-/* HEADER */
 header{background:var(--s1);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100}
 .logo{width:28px;height:28px;background:var(--orange);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:#fff;flex-shrink:0}
-.logo-title{font-size:13px;font-weight:700;color:#fff}
+.logo-title{font-size:13px;font-weight:700}
 .logo-sub{font-size:11px;color:var(--muted);margin-top:1px}
 .header-center{flex:1;display:flex;justify-content:center}
 .nav-tabs{display:flex;gap:2px;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:3px}
@@ -33,138 +27,131 @@ header{background:var(--s1);border-bottom:1px solid var(--border);height:52px;di
 .nav-tab:hover{color:var(--text)}
 .nav-tab.active{background:var(--s4);color:#fff}
 .header-right{display:flex;align-items:center;gap:8px;margin-left:auto}
-.sync-status{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--dim)}
-.sync-status.live{color:var(--green)}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--dim)}
+.sync-dot.live{background:var(--green);box-shadow:0 0 6px var(--green)}
+.sync-txt{font-size:11px;color:var(--muted)}
 .refresh-btn{background:var(--s3);border:1px solid var(--border2);color:var(--muted);font-size:11px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;transition:all .15s}
 .refresh-btn:hover{color:var(--text);border-color:var(--orange)}
 .refresh-btn svg{transition:transform .3s}
-.refresh-btn.spinning svg{animation:spin .6s linear infinite}
+.spinning svg{animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* PAGES */
 .page{display:none;padding:20px}.page.active{display:block}
 
-/* STAT STRIP */
-.stat-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:20px}
-.stat-card{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .15s}
-.stat-card:hover{border-color:var(--border2)}
-.stat-card.active-filter{border-color:var(--c,var(--orange))}
-.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--c,var(--orange))}
-.stat-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
-.stat-val{font-size:22px;font-weight:800;color:#fff;line-height:1}
-.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+/* QUEUE TABS */
+.queue-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto}
+.qtab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-size:12px;font-weight:600;padding:10px 16px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:6px;margin-bottom:-1px}
+.qtab:hover{color:var(--text)}
+.qtab.active{color:#fff;border-bottom-color:var(--qc,var(--orange))}
+.qtab .badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--s3)}
+.qtab.active .badge{background:var(--qc,var(--orange));color:#fff}
 
-/* TOOLBAR */
-.toolbar{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
-.search-box{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;font-size:12px;color:var(--text);font-family:'Inter',sans-serif;width:220px}
-.search-box::placeholder{color:var(--dim)}
-.search-box:focus{outline:none;border-color:var(--orange)}
-.filter-pill{background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
-.filter-pill:hover{border-color:var(--border2);color:var(--text)}
-.filter-pill.on{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
-.ml-auto{margin-left:auto}
-
-/* QUEUE BOARD */
-.board{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;align-items:start}
-.queue-col{}
-.queue-head{display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--qc,var(--border))}
-.q-dot{width:7px;height:7px;border-radius:50%;background:var(--qc);flex-shrink:0}
-.q-name{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);flex:1}
-.q-count{font-size:11px;font-weight:700;background:var(--s3);border-radius:8px;padding:1px 7px;color:var(--muted);font-variant-numeric:tabular-nums}
-.col-cards{display:flex;flex-direction:column;gap:8px;min-height:60px}
-
-/* JOB CARD */
-.job-card{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:border-color .15s,transform .1s;position:relative;overflow:hidden}
+/* JOB GRID */
+.job-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.job-card{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:border-color .15s,transform .1s;position:relative;overflow:hidden}
 .job-card:hover{border-color:var(--border2);transform:translateY(-1px)}
 .job-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--jc,var(--border2))}
-.job-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);margin-bottom:4px;letter-spacing:.04em}
+.job-num{font-family:monospace;font-size:10px;color:var(--dim);margin-bottom:4px}
 .job-co{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;line-height:1.3}
 .job-desc{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.4}
 .job-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
-.tag{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 6px;border-radius:3px}
-.job-foot{display:flex;align-items:center;justify-content:space-between}
-.job-due{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
-.job-due.overdue{color:var(--red)}
-.job-due.today{color:var(--yellow)}
-.job-due.soon{color:var(--orange)}
-.job-amt{font-size:11px;font-weight:700;color:var(--orange);font-variant-numeric:tabular-nums}
-.job-rep{display:flex;align-items:center;gap:5px;margin-top:6px}
-.rep-av{width:16px;height:16px;border-radius:50%;background:var(--s4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:var(--muted);flex-shrink:0}
-.rep-name{font-size:10px;color:var(--dim)}
-.empty-col{border:1px dashed var(--border);border-radius:8px;padding:20px;text-align:center;color:var(--dim);font-size:11px}
+.tag{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:3px}
+.job-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.job-due{font-size:10px;color:var(--muted)}
+.job-due.overdue{color:var(--red);font-weight:600}
+.job-due.soon{color:var(--yellow)}
+.job-amt{font-size:12px;font-weight:700;color:var(--orange)}
+.job-rep{font-size:10px;color:var(--dim);margin-top:6px;display:flex;align-items:center;gap:5px}
+.rep-av{width:16px;height:16px;border-radius:50%;background:var(--s4);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:var(--muted);flex-shrink:0}
+.empty{text-align:center;padding:40px;color:var(--dim);font-size:13px;grid-column:1/-1}
+
+/* TABLE */
+.tbl-wrap{background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:16px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);background:var(--s2)}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:hover td{background:var(--s2);cursor:pointer}
+tr:last-child td{border-bottom:none}
+.mono{font-family:monospace;color:var(--muted)}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.search{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;font-size:12px;color:var(--text);font-family:'Inter',sans-serif;width:220px}
+.search::placeholder{color:var(--dim)}
+.search:focus{outline:none;border-color:var(--orange)}
+.rep-pill{background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.rep-pill:hover{border-color:var(--border2);color:var(--text)}
+.rep-pill.on{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
+.count-lbl{margin-left:auto;font-size:11px;color:var(--dim)}
+
+/* STAT STRIP */
+.stat-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;position:relative;overflow:hidden}
+.stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--sc,var(--orange))}
+.stat-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.stat-val{font-size:24px;font-weight:800;color:#fff}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
 
 /* MODAL */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
 .overlay.open{display:flex}
 .modal{background:var(--s1);border:1px solid var(--border2);border-radius:12px;width:100%;max-width:500px;max-height:88vh;overflow-y:auto}
-.modal-top{padding:20px 22px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
-.modal-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);margin-bottom:3px;font-weight:600}
-.modal-co{font-size:17px;font-weight:800;color:#fff}
-.modal-x{margin-left:auto;background:none;border:none;color:var(--dim);cursor:pointer;font-size:18px;padding:2px;line-height:1}
+.modal-top{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start}
+.modal-num{font-family:monospace;font-size:11px;color:var(--orange);margin-bottom:3px;font-weight:600}
+.modal-co{font-size:17px;font-weight:800}
+.modal-x{margin-left:auto;background:none;border:none;color:var(--dim);cursor:pointer;font-size:18px;line-height:1;padding:2px}
 .modal-x:hover{color:var(--text)}
 .modal-body{padding:18px 22px}
-.m-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.m-field label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:3px}
-.m-field .v{font-size:13px;color:var(--text)}
-.m-field .v.mono{font-family:'JetBrains Mono',monospace;font-size:12px}
-.m-div{border:none;border-top:1px solid var(--border);margin:14px 0}
+.m2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.mf label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:3px}
+.mf .v{font-size:13px;color:var(--text)}
+.mdiv{border:none;border-top:1px solid var(--border);margin:14px 0}
 .modal-acts{display:flex;gap:8px;padding:14px 22px;border-top:1px solid var(--border)}
-.act-btn{flex:1;padding:9px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:var(--s2);color:var(--muted);font-family:'Inter',sans-serif;text-align:center;transition:all .15s}
-.act-btn:hover{color:var(--text);border-color:var(--orange)}
-.act-btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}
-.act-btn.primary:hover{opacity:.9}
+.abtn{flex:1;padding:9px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:var(--s2);color:var(--muted);font-family:'Inter',sans-serif;transition:all .15s}
+.abtn:hover{color:var(--text);border-color:var(--orange)}
+.abtn.primary{background:var(--orange);border-color:var(--orange);color:#fff}
 
-/* CUSTOMERS PAGE */
-.data-table{width:100%;border-collapse:collapse;font-size:12px}
-.data-table th{text-align:left;padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);background:var(--s2)}
-.data-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
-.data-table tr:hover td{background:var(--s2)}
-.data-table .mono{font-family:'JetBrains Mono',monospace;color:var(--muted)}
-.table-wrap{background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.page-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:4px}
-.page-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
-
-/* LOADING */
-.load-screen{position:fixed;inset:0;background:rgba(10,10,11,.9);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;backdrop-filter:blur(4px)}
-.load-screen.open{display:flex}
-.load-ring{width:32px;height:32px;border:3px solid var(--s3);border-top-color:var(--orange);border-radius:50%;animation:spin .6s linear infinite}
+/* LOADER */
+.loader{position:fixed;inset:0;background:rgba(10,10,11,.9);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;backdrop-filter:blur(4px)}
+.loader.open{display:flex}
+.ring{width:32px;height:32px;border:3px solid var(--s3);border-top-color:var(--orange);border-radius:50%;animation:spin .6s linear infinite}
 .load-txt{font-size:13px;color:var(--muted)}
 
-/* STATUS BADGES */
-.badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:3px}
+/* REPORTS */
+.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.report-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:20px}
+.rc-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.rc-big{font-size:30px;font-weight:900;color:#fff;line-height:1}
+.rc-sub{font-size:12px;color:var(--muted);margin-top:4px;margin-bottom:14px}
+.rc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.rc-row:last-child{border-bottom:none}
 
-@media(max-width:1100px){.board{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:800px){.board{grid-template-columns:repeat(2,1fr)};.stat-strip{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:500px){.board{grid-template-columns:1fr};.stat-strip{grid-template-columns:repeat(2,1fr)};.nav-tab{padding:5px 8px;font-size:11px}}
+@media(max-width:700px){.stat-strip{grid-template-columns:repeat(3,1fr)}.nav-tab{padding:5px 8px;font-size:10px}}
 </style>
 </head>
 <body>
 
-<div class="load-screen" id="loader">
-  <div class="load-ring"></div>
+<div class="loader" id="loader">
+  <div class="ring"></div>
   <div class="load-txt" id="load-txt">Connecting to Corebridge...</div>
 </div>
 
 <header>
   <div class="logo">FS</div>
-  <div>
-    <div class="logo-title">FastSigns Eatontown</div>
-    <div class="logo-sub">Operations Hub</div>
-  </div>
+  <div><div class="logo-title">FastSigns Eatontown</div><div class="logo-sub">Operations Hub</div></div>
   <div class="header-center">
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="showPage('queues',this)">Queues</button>
       <button class="nav-tab" onclick="showPage('orders',this)">Orders</button>
-      <button class="nav-tab" onclick="showPage('customers',this)">Customers</button>
       <button class="nav-tab" onclick="showPage('estimates',this)">Estimates</button>
       <button class="nav-tab" onclick="showPage('reports',this)">Reports</button>
     </div>
   </div>
   <div class="header-right">
-    <span class="sync-status" id="sync-status">Not loaded</span>
+    <div class="sync-dot" id="sync-dot"></div>
+    <span class="sync-txt" id="sync-txt">Loading...</span>
     <button class="refresh-btn" id="refresh-btn" onclick="loadAll()">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-      Refresh
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Refresh
     </button>
   </div>
 </header>
@@ -172,345 +159,158 @@ header{background:var(--s1);border-bottom:1px solid var(--border);height:52px;di
 <!-- QUEUES PAGE -->
 <div class="page active" id="page-queues">
   <div class="stat-strip" id="stat-strip"></div>
+  <div class="queue-tabs" id="queue-tabs"></div>
   <div class="toolbar">
-    <input class="search-box" placeholder="Search customer, order #, product..." oninput="setSearch(this.value)" />
-    <button class="filter-pill" onclick="setRep('all',this)" id="rep-all" style="display:none">All Reps</button>
-    <span id="rep-filters"></span>
-    <span class="ml-auto" style="font-size:11px;color:var(--dim)" id="job-count"></span>
+    <input class="search" placeholder="Search customer, order #, product..." oninput="setSearch(this.value)" id="q-search"/>
+    <div id="rep-btns"></div>
+    <span class="count-lbl" id="q-count"></span>
   </div>
-  <div class="board" id="board"></div>
+  <div class="job-grid" id="job-grid"></div>
 </div>
 
 <!-- ORDERS PAGE -->
 <div class="page" id="page-orders">
-  <div class="page-title">Orders</div>
-  <div class="page-sub">All active orders from Corebridge</div>
   <div class="toolbar">
-    <input class="search-box" placeholder="Search orders..." oninput="filterTable('orders-table',this.value)" />
+    <input class="search" placeholder="Search orders..." oninput="filterTbl('orders-body',this.value)"/>
   </div>
-  <div class="table-wrap">
-    <table class="data-table" id="orders-table">
-      <thead><tr><th>Order #</th><th>Customer</th><th>Description</th><th>Status</th><th>Due</th><th>Amount</th><th>Rep</th></tr></thead>
-      <tbody id="orders-body"><tr><td colspan="7" style="text-align:center;color:var(--dim);padding:30px">Loading...</td></tr></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- CUSTOMERS PAGE -->
-<div class="page" id="page-customers">
-  <div class="page-title">Customers</div>
-  <div class="page-sub">Customer database from Corebridge</div>
-  <div class="toolbar">
-    <input class="search-box" placeholder="Search customers..." oninput="filterTable('customers-table',this.value)" />
-  </div>
-  <div class="table-wrap">
-    <table class="data-table" id="customers-table">
-      <thead><tr><th>Company</th><th>Contact</th><th>Email</th><th>Phone</th><th>City</th></tr></thead>
-      <tbody id="customers-body"><tr><td colspan="5" style="text-align:center;color:var(--dim);padding:30px">Loading...</td></tr></tbody>
-    </table>
+  <div class="tbl-wrap">
+    <table><thead><tr><th>Order #</th><th>Customer</th><th>Description</th><th>Status</th><th>Due</th><th>Amount</th><th>Rep</th></tr></thead>
+    <tbody id="orders-body"></tbody></table>
   </div>
 </div>
 
 <!-- ESTIMATES PAGE -->
 <div class="page" id="page-estimates">
-  <div class="page-title">Estimates</div>
-  <div class="page-sub">Open estimates and pipeline</div>
   <div class="toolbar">
-    <input class="search-box" placeholder="Search estimates..." oninput="filterTable('estimates-table',this.value)" />
+    <input class="search" placeholder="Search estimates..." oninput="filterTbl('estimates-body',this.value)"/>
   </div>
-  <div class="table-wrap">
-    <table class="data-table" id="estimates-table">
-      <thead><tr><th>Estimate #</th><th>Customer</th><th>Description</th><th>Status</th><th>Due</th><th>Amount</th><th>Rep</th></tr></thead>
-      <tbody id="estimates-body"><tr><td colspan="7" style="text-align:center;color:var(--dim);padding:30px">Loading...</td></tr></tbody>
-    </table>
+  <div class="tbl-wrap">
+    <table><thead><tr><th>Est #</th><th>Customer</th><th>Description</th><th>Status</th><th>Due</th><th>Amount</th><th>Rep</th></tr></thead>
+    <tbody id="estimates-body"></tbody></table>
   </div>
 </div>
 
 <!-- REPORTS PAGE -->
 <div class="page" id="page-reports">
-  <div class="page-title">Reports</div>
-  <div class="page-sub">Production and sales summaries</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px" id="reports-grid"></div>
+  <div class="report-grid" id="report-grid"></div>
 </div>
 
 <!-- MODAL -->
 <div class="overlay" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-top">
-      <div>
-        <div class="modal-num" id="m-num"></div>
-        <div class="modal-co" id="m-co"></div>
-      </div>
+      <div><div class="modal-num" id="m-num"></div><div class="modal-co" id="m-co"></div></div>
       <button class="modal-x" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="m-row">
-        <div class="m-field"><label>Product / Description</label><div class="v" id="m-desc"></div></div>
-        <div class="m-field"><label>Amount</label><div class="v" id="m-amt"></div></div>
+      <div class="m2">
+        <div class="mf"><label>Description</label><div class="v" id="m-desc"></div></div>
+        <div class="mf"><label>Amount</label><div class="v" id="m-amt"></div></div>
       </div>
-      <div class="m-row">
-        <div class="m-field"><label>Status</label><div class="v" id="m-status"></div></div>
-        <div class="m-field"><label>Substatus</label><div class="v" id="m-sub"></div></div>
+      <div class="m2">
+        <div class="mf"><label>Status</label><div class="v" id="m-status"></div></div>
+        <div class="mf"><label>Rep</label><div class="v" id="m-rep"></div></div>
       </div>
-      <div class="m-row">
-        <div class="m-field"><label>Due Date</label><div class="v mono" id="m-due"></div></div>
-        <div class="m-field"><label>Sales Rep</label><div class="v" id="m-rep"></div></div>
+      <div class="m2">
+        <div class="mf"><label>Due Date</label><div class="v" id="m-due"></div></div>
+        <div class="mf"><label>Contact</label><div class="v" id="m-contact"></div></div>
       </div>
-      <hr class="m-div">
-      <div class="m-row">
-        <div class="m-field"><label>Contact</label><div class="v" id="m-contact"></div></div>
-        <div class="m-field"><label>Phone</label><div class="v" id="m-phone"></div></div>
-      </div>
-      <div class="m-row">
-        <div class="m-field"><label>Production Type</label><div class="v" id="m-type"></div></div>
-        <div class="m-field"><label>Order Email</label><div class="v" id="m-email"></div></div>
+      <hr class="mdiv">
+      <div class="m2">
+        <div class="mf"><label>Email</label><div class="v" id="m-email"></div></div>
+        <div class="mf"><label>Production</label><div class="v" id="m-type"></div></div>
       </div>
     </div>
     <div class="modal-acts">
-      <button class="act-btn" onclick="copyNum()">📋 Copy #</button>
-      <button class="act-btn" onclick="findInstaller()">🔧 Find Installer</button>
-      <button class="act-btn primary" onclick="findVendor()">🏭 Find Vendor</button>
+      <button class="abtn" onclick="copyNum()">📋 Copy #</button>
+      <button class="abtn" onclick="findInstaller()">🔧 Find Installer</button>
+      <button class="abtn primary" onclick="findVendor()">🏭 Find Vendor</button>
     </div>
   </div>
 </div>
 
 <script>
-// ── PROXY ──
 const PROXY = '/api/corebridge';
-
-// ── STATE ──
-let orders = [], customers = [], estimates = [];
-let searchQ = '', repFilter = 'all';
+let allOrders = [], allEstimates = [];
+let activeQueue = 'all', searchQ = '', activeRep = 'all';
 let currentItem = null;
 
-// ── QUEUE DEFINITIONS (matching exact Corebridge status values) ──
-// Queue definitions matching exact Corebridge ProductStatusCBName values
-// Full status list confirmed by Corebridge support
+// ── QUEUE DEFINITIONS based on exact Corebridge status values ──
 const QUEUES = [
-  {
-    id: 'sales-review',
-    name: 'Sales Review',
-    color: 'var(--pink)',
-    match: j => {
-      const m = j.matchStr;
-      return m.includes('sales review') || m.includes('order review') ||
-             m.includes('design needed') || m.includes('estimate : estimate') ||
-             (m.includes('estimate') && !m.includes('awaiting') && 
-              !m.includes('approved') && !m.includes('revision') &&
-              !m.includes('cancelled') && !m.includes('design needed'));
-    }
-  },
-  {
-    id: 'customer-action',
-    name: 'Customer Action',
-    color: 'var(--yellow)',
-    match: j => {
-      const m = j.matchStr;
-      return m.includes('awaiting customer') ||
-             m.includes('customer action') ||
-             m.includes('awaiting proof') ||
-             m.includes('proof approved') ||
-             m.includes('follow-up') ||
-             m.includes('follow up') ||
-             m.includes('revision');
-    }
-  },
-  {
-    id: 'in-design',
-    name: 'In Design',
-    color: 'var(--teal)',
-    match: j => {
-      const m = j.matchStr;
-      return (m.includes('in design') && !m.includes('revision')) ||
-             m.includes('design review') || m.includes('quality control');
-    }
-  },
-  {
-    id: 'in-design-revision',
-    name: 'Design Revision',
-    color: 'var(--orange)',
-    match: j => {
-      const m = j.matchStr;
-      return m.includes('in design revision') || m.includes('design revision');
-    }
-  },
-  {
-    id: 'vended',
-    name: 'Vended / Outsourced',
-    color: 'var(--purple)',
-    match: j => {
-      const m = j.matchStr;
-      return m.includes('vended product') || m.includes('vend');
-    }
-  },
-  {
-    id: 'wip',
-    name: 'In Production',
-    color: 'var(--blue)',
-    match: j => {
-      const m = j.matchStr;
-      return m.includes('in production') ||
-             (m.includes('wip') && !m.includes('vend') && !m.includes('design') &&
-              !m.includes('review') && !m.includes('customer') && !m.includes('proof') &&
-              !m.includes('revision') && !m.includes('quality') && !m.includes('built'));
-    }
-  },
-  {
-    id: 'built',
-    name: 'Built — Ready',
-    color: 'var(--green)',
-    match: j => {
-      const m = j.matchStr;
-      return m.includes('built') || m.includes('awaiting installation') ||
-             m.includes('awaiting pickup') || m.includes('paid in full') ||
-             m.includes('closed');
-    }
-  }
+  { id:'all',        name:'All Active',       color:'var(--orange)', filter: j => true },
+  { id:'sales',      name:'Sales Review',     color:'var(--pink)',   filter: j => j.cbStatus.includes('sales review') || j.cbStatus.includes('order review') || j.cbStatus === 'estimate : estimate' || j.cbStatus.includes('design needed') },
+  { id:'customer',   name:'Customer Action',  color:'var(--yellow)', filter: j => j.cbStatus.includes('awaiting customer') || j.cbStatus.includes('customer action') || j.cbStatus.includes('follow') || j.cbStatus.includes('awaiting proof') || j.cbStatus.includes('proof approved') },
+  { id:'design',     name:'In Design',        color:'var(--teal)',   filter: j => (j.cbStatus.includes('in design') && !j.cbStatus.includes('revision')) || j.cbStatus.includes('design review') || j.cbStatus.includes('quality control') },
+  { id:'revision',   name:'Design Revision',  color:'var(--orange)', filter: j => j.cbStatus.includes('revision') },
+  { id:'production', name:'In Production',    color:'var(--blue)',   filter: j => j.cbStatus.includes('in production') || (j.cbStatus.includes('wip') && !j.cbStatus.includes('design') && !j.cbStatus.includes('vend') && !j.cbStatus.includes('review') && !j.cbStatus.includes('customer') && !j.cbStatus.includes('proof') && !j.cbStatus.includes('built')) },
+  { id:'vended',     name:'Vended',           color:'var(--purple)', filter: j => j.isVended || j.cbStatus.includes('vend') },
+  { id:'built',      name:'Built / Ready',    color:'var(--green)',  filter: j => j.cbStatus.includes('built') || j.cbStatus.includes('awaiting installation') || j.cbStatus.includes('awaiting pickup') },
+  { id:'overdue',    name:'Overdue',          color:'var(--red)',    filter: j => j.isOverdue },
 ];
 
-// ── STATS CONFIG ──
-const STATS = [
-  {label:'Sales Review', key:'sales-review', color:'var(--pink)'},
-  {label:'Customer Action', key:'customer-action', color:'var(--yellow)'},
-  {label:'In Design', key:'in-design', color:'var(--teal)'},
-  {label:'In Production', key:'wip', color:'var(--blue)'},
-  {label:'Vended', key:'vended', color:'var(--purple)'},
-  {label:'Built / Ready', key:'built', color:'var(--green)'},
-];
-
-// ── DATE HELPERS ──
+// ── HELPERS ──
 function parseDate(raw) {
   if (!raw) return null;
-  // Handle Corebridge DateText objects
   if (typeof raw === 'object' && raw.DateText) raw = raw.DateText;
   if (!raw) return null;
-  try {
-    const d = new Date(raw);
-    return isNaN(d.getTime()) ? null : d;
-  } catch { return null; }
+  const d = new Date(raw);
+  return isNaN(d.getTime()) ? null : d;
 }
 
 function fmtDate(d) {
   if (!d) return '—';
-  return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-}
-
-function fmtDateTime(d) {
-  if (!d) return '—';
-  return d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', year:'numeric'});
-}
-
-function dueLbl(d) {
-  if (!d) return {txt:'No due date', cls:''};
-  const today = new Date(); today.setHours(0,0,0,0);
-  const diff = Math.floor((d - today) / 86400000);
-  if (diff < 0) return {txt:`${Math.abs(diff)}d overdue`, cls:'overdue'};
-  if (diff === 0) return {txt:'Due today', cls:'today'};
-  if (diff <= 3) return {txt:`Due in ${diff}d`, cls:'soon'};
-  return {txt:fmtDate(d), cls:''};
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 }
 
 function fmtAmt(n) {
   if (!n || n === 0) return '';
-  return '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  return '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
 function initials(name) {
   return (name||'?').split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
 }
 
-// ── MAP API DATA ──
-function mapOrder(item) {
-  // Handle ExOrder/GetOrdersByStatus and ExOrderProduct responses
-  // GetOrdersByStatus returns: OrderId, Status, OrderStatus, CompanyName, OrderSalesPerson, etc.
-  // ExOrderProduct returns: ProductStatusCBName, ProductDescription, IsVended, etc.
+function dueLbl(d, isBuilt) {
+  if (!d) return {txt:'No date',cls:''};
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.floor((d-today)/86400000);
+  if (diff < 0 && !isBuilt) return {txt:`${Math.abs(diff)}d overdue`,cls:'overdue'};
+  if (diff === 0) return {txt:'Due today',cls:'soon'};
+  if (diff <= 3) return {txt:`Due in ${diff}d`,cls:'soon'};
+  return {txt:fmtDate(d),cls:''};
+}
 
-  const statusCBName = item.ProductStatusCBName || '';
-  const orderStatus = item.Status || item.OrderStatus || '';
-  const statusRaw = statusCBName || orderStatus;
-  const substatusRaw = item.ProductSubStatus || item.ProductSubstatus || item.Substatus || '';
-
-  const statusFull = statusRaw;
-  const statusParts = statusRaw.split(' : ');
-  const mainStatus = statusParts[0]?.trim() || statusRaw;
-  const subStatus = statusParts.length > 1 ? statusParts.slice(1).join(' : ').trim() : substatusRaw;
-
-  // matchStr used for queue routing — must contain full status string
-  const matchStr = (statusRaw + ' ' + substatusRaw).toLowerCase();
-
-  // Due dates — try all possible field names
-  const dueDate = parseDate(item.ProductProductionDue) ||
+// ── MAP RECORD ──
+function mapRecord(item, type) {
+  const statusRaw = item.Status || '';
+  const cbStatus = statusRaw.toLowerCase();
+  const dueDate = parseDate(item.EstimateProjectedOrderDueDate) ||
                   parseDate(item.OrderDueDate) ||
-                  parseDate(item.DueDate) ||
-                  parseDate(item.EstimateProjectedOrderDueDate);
-
-  // Amount
-  const amount = parseFloat(
-    item.ProductSubTotal || item.ProductTotal ||
-    item.OrderSubTotal || item.OrderTotal ||
-    item.SubtotalAmount || item.Amount || 0
-  );
-
-  // Rep
-  const designerName = item.Designer
-    ? `${item.Designer.FirstName||''} ${item.Designer.LastName||''}`.trim()
-    : '';
-  const rep = item.OrderSalesPerson || item.SalespersonName || designerName || '—';
-
-  // Order ID
-  const orderId = item.ExOrderProductId
-    ? `${item.OrderId}-P${item.ExOrderProductId}`
-    : String(item.OrderId || item.EstimateId || item.Id || '');
+                  parseDate(item.DueDate);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const isBuilt = cbStatus.includes('built');
+  const isOverdue = dueDate && dueDate < today && !isBuilt;
 
   return {
-    id: String(item.ExOrderProductId || item.OrderId || item.EstimateId || item.Id || ''),
-    orderId: orderId,
+    id: String(item.OrderId || item.EstimateId || item.Id || ''),
+    num: type === 'estimate'
+      ? (item.EstimateNumber ? `EST-${item.EstimateNumber}` : String(item.OrderId||''))
+      : String(item.OrderId||''),
     customer: item.CompanyName || item.CustomerName || item.OrderContact || '—',
     contact: item.OrderContact || item.EstimateContact || '',
     email: item.OrderContactEmail || item.EstimateContactEmail || '',
     phone: item.CompanyPhone || '',
-    description: item.ProductDescription || item.OrderDescription || item.OrderText || item.EstimateText || '—',
-    status: mainStatus,
-    substatus: subStatus,
-    statusFull: statusFull,
-    matchStr: matchStr,
-    rep: rep,
-    dueDate: dueDate,
-    amount: amount,
-    isVended: item.IsVended === true || matchStr.includes('vend'),
-  };
-}
-
-function mapEstimate(item) {
-  const statusRaw = item.Status || item.EstimateStatus || '';
-  const substatusRaw = item.ProductSubstatus || item.Substatus || '';
-  return {
-    id: String(item.EstimateId || item.Id || ''),
-    orderId: String(item.EstimateNumber || item.EstimateId || ''),
-    customer: item.CompanyName || item.CustomerName || '—',
-    contact: item.EstimateContact || '',
-    email: item.EstimateContactEmail || '',
-    phone: '',
-    description: item.EstimateText || item.OrderDescription || '—',
+    description: item.OrderDescription || item.OrderText || item.EstimateText || '—',
     status: statusRaw,
-    substatus: substatusRaw,
-    statusFull: statusRaw,
-    rep: item.SalespersonName || item.EstimateSalesPerson || '—',
-    dueDate: parseDate(item.EstimateProjectedOrderDueDate) || parseDate(item.EstimateDueDate),
-    amount: parseFloat(item.EstimateSubTotal || item.SubtotalAmount || 0),
-    isVended: false,
-  };
-}
-
-function mapCustomer(item) {
-  return {
-    id: String(item.CustomerId || item.Id || ''),
-    company: item.CompanyName || '—',
-    contact: `${item.FirstName||''} ${item.LastName||''}`.trim() || '—',
-    email: item.Email || item.CompanyEmail || '—',
-    phone: item.CompanyPhone || item.Phone || '—',
-    city: item.City || '—',
-    state: item.State || '',
+    cbStatus: cbStatus,
+    rep: item.OrderSalesPerson || item.OrderSalesPerson || item.SalespersonName || '—',
+    dueDate,
+    amount: parseFloat(item.OrderSubTotal||item.OrderTotal||item.SubtotalAmount||0),
+    isVended: cbStatus.includes('vend'),
+    isBuilt,
+    isOverdue,
+    type,
   };
 }
 
@@ -526,377 +326,283 @@ async function apiFetch(endpoint, action, extraParams) {
   return Array.isArray(d) ? d : [];
 }
 
+// ── LOAD ALL ──
 async function loadAll() {
   const btn = document.getElementById('refresh-btn');
   btn.classList.add('spinning');
   showLoader('Connecting to Corebridge...');
 
+  allOrders = [];
+  allEstimates = [];
+
   try {
-    setLoader('Loading active jobs...');
-    // Per Corebridge support guidance (Ticket FD384974):
-    // Pull each status separately to ensure we get all jobs
-    let rawOrders = [];
-
-    // Pull WIP, BUILT, and ESTIMATE orders separately
-    for (const status of ['WIP', 'BUILT', 'ESTIMATE']) {
+    // Pull WIP + BUILT orders
+    for (const status of ['WIP','BUILT']) {
       try {
-        const jobs = await apiFetch('ExOrder', 'GetOrdersByStatus', `listOfStatus=${status}`);
-        console.log(`${status} orders:`, jobs.length);
-        rawOrders = rawOrders.concat(jobs);
-      } catch(e) { console.warn(`${status}:`, e.message); }
+        const items = await apiFetch('ExOrder','GetOrdersByStatus',`listOfStatus=${status}`);
+        console.log(`${status}:`, items.length);
+        allOrders = allOrders.concat(items.map(i => mapRecord(i, 'order')));
+      } catch(e) { console.warn(status, e.message); }
     }
 
-    // Also pull line-level product status (In Design, Vended etc.)
-    // Per PDF: GET /api/public/ExOrderProduct/GetExOrderProductByOrderStatus?listOfStatus=WIP,BUILT
-    let rawProducts = [];
+    // Pull ESTIMATE orders — these are shown in both Queues (Customer Action, Sales Review)
+    // and the Estimates tab
     try {
-      const products = await apiFetch('ExOrderProduct', 'GetExOrderProductByOrderStatus', 'listOfStatus=WIP,BUILT,ESTIMATE');
-      console.log('Product lines:', products.length);
-      rawProducts = products;
-    } catch(e) { console.warn('Product lines:', e.message); }
+      const estItems = await apiFetch('ExOrder','GetOrdersByStatus','listOfStatus=ESTIMATE');
+      console.log('ESTIMATE:', estItems.length);
+      allEstimates = estItems.map(i => mapRecord(i, 'estimate'));
+    } catch(e) { console.warn('ESTIMATE', e.message); }
 
-    console.log('Total raw orders:', rawOrders.length, '| Product lines:', rawProducts.length);
+    // Dedupe by ID
+    const seenO = new Set();
+    allOrders = allOrders.filter(j => { if (seenO.has(j.id)) return false; seenO.add(j.id); return true; });
 
-    setLoader('Loading estimates...');
-    let rawEstimates = [];
-    try { rawEstimates = await apiFetch('ExEstimate'); } catch(e) { console.warn('Estimates:', e.message); }
+    console.log('Orders:', allOrders.length, '| Estimates:', allEstimates.length);
 
-    setLoader('Loading customers...');
-    let rawCustomers = [];
-    try { rawCustomers = await apiFetch('ExCustomer'); } catch(e) { console.warn('Customers:', e.message); }
-
-    // Dedupe orders by ID
-    const seen = new Set();
-    orders = [];
-
-    // Process orders from GetOrdersByStatus
-    rawOrders.forEach(item => {
-      const id = String(item.OrderId || item.Id || '');
-      const statusRaw = (item.Status || item.OrderStatus || '').toUpperCase();
-      if (!id || seen.has(id)) return;
-      if (statusRaw === 'CANCELLED' || statusRaw === 'VOIDED' || statusRaw === 'CLOSED') return;
-      seen.add(id);
-      orders.push(mapOrder(item));
-    });
-
-    // If we got product-level data, use it to enrich order status info
-    if (rawProducts.length > 0 && orders.length > 0) {
-      const productsByOrderId = {};
-      rawProducts.forEach(p => {
-        const oid = String(p.OrderId || '');
-        if (!productsByOrderId[oid]) productsByOrderId[oid] = [];
-        productsByOrderId[oid].push(p);
-      });
-      // Add product status info to matching orders
-      orders.forEach(order => {
-        const oid = order.orderId.split('-')[0];
-        const prods = productsByOrderId[oid];
-        if (prods && prods.length > 0) {
-          // Use the most specific product status for queue routing
-          const prod = prods[0];
-          if (prod.ProductStatusCBName && !order.statusFull.includes(':')) {
-            order.statusFull = prod.ProductStatusCBName;
-            order.matchStr = prod.ProductStatusCBName.toLowerCase();
-          }
-        }
-      });
-    }
-
-    // If still no orders, try product endpoint directly as last resort
-    if (orders.length === 0 && rawProducts.length > 0) {
-      const seenP = new Set();
-      rawProducts.forEach(item => {
-        const id = String(item.ExOrderProductId || item.OrderId || '');
-        if (!id || seenP.has(id)) return;
-        seenP.add(id);
-        orders.push(mapOrder(item));
-      });
-    }
-
-    console.log('Total active orders mapped:', orders.length);
-
-    // Dedupe estimates
-    const seenE = new Set();
-    estimates = [];
-    rawEstimates.forEach(item => {
-      const id = String(item.EstimateId || item.Id || '');
-      if (!id || seenE.has(id)) return;
-      seenE.add(id);
-      estimates.push(mapEstimate(item));
-    });
-
-    // Dedupe customers
-    const seenC = new Set();
-    customers = [];
-    rawCustomers.forEach(item => {
-      const id = String(item.CustomerId || item.Id || '');
-      if (!id || seenC.has(id)) return;
-      seenC.add(id);
-      customers.push(mapCustomer(item));
-    });
-
-    // Render everything
-    renderQueues();
-    renderOrdersTable();
-    renderCustomersTable();
-    renderEstimatesTable();
-    renderReports();
+    renderAll();
     buildRepFilters();
 
-    const now = new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
-    const ss = document.getElementById('sync-status');
-    ss.textContent = `Live · ${now}`;
-    ss.className = 'sync-status live';
+    const now = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('sync-dot').className = 'sync-dot live';
+    document.getElementById('sync-txt').textContent = `Live · ${now}`;
 
   } catch(err) {
     console.error('Load failed:', err);
-    const ss = document.getElementById('sync-status');
-    ss.textContent = 'Error — ' + err.message;
-    ss.className = 'sync-status';
+    document.getElementById('sync-txt').textContent = 'Error: ' + err.message;
   } finally {
     hideLoader();
     btn.classList.remove('spinning');
   }
 }
 
-// ── QUEUE BOARD ──
-function renderQueues() {
-  // Combine orders + estimates that need action for the board
-  const allItems = [...orders, ...estimates.filter(e => {
-    const s = e.status.toLowerCase();
-    return s.includes('sales review') || s.includes('awaiting customer') || s.includes('customer action');
-  })];
-
-  // Apply search + rep filter
-  let filtered = allItems;
-  if (searchQ) {
-    const q = searchQ.toLowerCase();
-    filtered = filtered.filter(j =>
-      j.customer.toLowerCase().includes(q) ||
-      j.orderId.toLowerCase().includes(q) ||
-      j.description.toLowerCase().includes(q)
-    );
-  }
-  if (repFilter !== 'all') {
-    filtered = filtered.filter(j => j.rep === repFilter);
-  }
-
-  // Stats
-  const statsEl = document.getElementById('stat-strip');
-  statsEl.innerHTML = STATS.map(s => {
-    const q = QUEUES.find(q => q.id === s.key);
-    const count = q ? allItems.filter(q.match).length : 0;
-    return `<div class="stat-card" style="--c:${s.color}" onclick="highlightQueue('${s.key}')">
-      <div class="stat-label">${s.label}</div>
-      <div class="stat-val">${count}</div>
-    </div>`;
-  }).join('');
-
-  // Board
-  const board = document.getElementById('board');
-  board.innerHTML = QUEUES.map(q => {
-    const items = filtered.filter(q.match);
-    const cards = items.length === 0
-      ? `<div class="empty-col">No items</div>`
-      : items.map(j => jobCard(j, q.color)).join('');
-    return `<div class="queue-col" id="qcol-${q.id}">
-      <div class="queue-head" style="--qc:${q.color}">
-        <div class="q-dot"></div>
-        <div class="q-name">${q.name}</div>
-        <div class="q-count">${items.length}</div>
-      </div>
-      <div class="col-cards">${cards}</div>
-    </div>`;
-  }).join('');
-
-  const total = filtered.length;
-  document.getElementById('job-count').textContent = `${total} item${total!==1?'s':''}`;
+// ── RENDER ALL ──
+function renderAll() {
+  renderStats();
+  renderQueueTabs();
+  renderQueueGrid();
+  renderOrdersTable();
+  renderEstimatesTable();
+  renderReports();
 }
 
-function jobCard(j, color) {
-  const due = dueLbl(j.dueDate);
-  const amt = fmtAmt(j.amount);
-  const typeTag = j.isVended
-    ? `<span class="tag" style="background:var(--purple-dim);color:var(--purple)">Outsourced</span>`
-    : `<span class="tag" style="background:var(--blue-dim);color:var(--blue)">In-House</span>`;
+// ── STATS ──
+function renderStats() {
+  const allItems = [...allOrders, ...allEstimates];
+  const wipCount = allOrders.filter(j=>j.cbStatus.includes('wip')||j.cbStatus.includes('in production')).length;
+  const overdueCount = allItems.filter(j=>j.isOverdue).length;
+  const vendedCount = allItems.filter(j=>j.isVended).length;
+  const builtCount = allOrders.filter(j=>j.isBuilt).length;
+  const totalVal = allOrders.reduce((s,j)=>s+j.amount,0);
 
-  let subTag = '';
-  const ss = j.substatus.toLowerCase();
-  if (ss.includes('redo') || ss.includes('recut')) subTag = `<span class="tag" style="background:var(--red-dim);color:var(--red)">Redo/Recut</span>`;
-  else if (ss.includes('installation')) subTag = `<span class="tag" style="background:var(--yellow-dim);color:var(--yellow)">Needs Install</span>`;
-  else if (ss.includes('pickup')) subTag = `<span class="tag" style="background:var(--green-dim);color:var(--green)">Pickup Ready</span>`;
-  else if (ss.includes('design time')) subTag = `<span class="tag" style="background:var(--teal-dim);color:var(--teal)">${j.substatus}</span>`;
+  document.getElementById('stat-strip').innerHTML = `
+    <div class="stat" style="--sc:var(--orange)">
+      <div class="stat-lbl">Total Active</div>
+      <div class="stat-val">${allOrders.length}</div>
+      <div class="stat-sub">Open orders</div>
+    </div>
+    <div class="stat" style="--sc:var(--yellow)">
+      <div class="stat-lbl">Estimates</div>
+      <div class="stat-val">${allEstimates.length}</div>
+      <div class="stat-sub">In pipeline</div>
+    </div>
+    <div class="stat" style="--sc:var(--blue)">
+      <div class="stat-lbl">In Production</div>
+      <div class="stat-val">${wipCount}</div>
+      <div class="stat-sub">WIP jobs</div>
+    </div>
+    <div class="stat" style="--sc:var(--purple)">
+      <div class="stat-lbl">Vended</div>
+      <div class="stat-val">${vendedCount}</div>
+      <div class="stat-sub">Outsourced</div>
+    </div>
+    <div class="stat" style="--sc:var(--green)">
+      <div class="stat-lbl">Built / Ready</div>
+      <div class="stat-val">${builtCount}</div>
+      <div class="stat-sub">Awaiting pickup/install</div>
+    </div>
+    <div class="stat" style="--sc:var(--red)">
+      <div class="stat-lbl">Overdue</div>
+      <div class="stat-val">${overdueCount}</div>
+      <div class="stat-sub">Past due date</div>
+    </div>`;
+}
 
-  return `<div class="job-card" style="--jc:${color}" onclick="openModal('${j.orderId}','${j.id}')">
-    <div class="job-num">${j.orderId}</div>
-    <div class="job-co">${j.customer}</div>
-    <div class="job-desc">${j.description}</div>
-    <div class="job-tags">${typeTag}${subTag}</div>
-    <div class="job-foot">
-      <span class="job-due ${due.cls}">${due.txt}</span>
-      ${amt ? `<span class="job-amt">${amt}</span>` : ''}
-    </div>
-    <div class="job-rep">
-      <div class="rep-av">${initials(j.rep)}</div>
-      <span class="rep-name">${j.rep}</span>
-    </div>
-  </div>`;
+// ── QUEUE TABS ──
+function renderQueueTabs() {
+  const allItems = [...allOrders, ...allEstimates];
+  document.getElementById('queue-tabs').innerHTML = QUEUES.map(q => {
+    const count = q.id === 'all' ? allItems.length : allItems.filter(q.filter).length;
+    return `<button class="qtab ${q.id===activeQueue?'active':''}" style="--qc:${q.color}" onclick="setQueue('${q.id}')">
+      ${q.name} <span class="badge">${count}</span>
+    </button>`;
+  }).join('');
+}
+
+// ── QUEUE GRID ──
+function renderQueueGrid() {
+  const q = QUEUES.find(q=>q.id===activeQueue);
+  let items = [...allOrders, ...allEstimates].filter(q.filter);
+
+  if (searchQ) {
+    const s = searchQ.toLowerCase();
+    items = items.filter(j => j.customer.toLowerCase().includes(s) || j.num.toLowerCase().includes(s) || j.description.toLowerCase().includes(s));
+  }
+  if (activeRep !== 'all') {
+    items = items.filter(j => j.rep === activeRep);
+  }
+
+  document.getElementById('q-count').textContent = `${items.length} item${items.length!==1?'s':''}`;
+
+  if (items.length === 0) {
+    document.getElementById('job-grid').innerHTML = `<div class="empty">No items in this queue</div>`;
+    return;
+  }
+
+  const color = q.color;
+  document.getElementById('job-grid').innerHTML = items.map(j => {
+    const due = dueLbl(j.dueDate, j.isBuilt);
+    const amt = fmtAmt(j.amount);
+    const typTag = j.isVended
+      ? `<span class="tag" style="background:rgba(168,85,247,.15);color:#C084FC">Outsourced</span>`
+      : `<span class="tag" style="background:rgba(59,130,246,.15);color:#60A5FA">In-House</span>`;
+    const estTag = j.type === 'estimate'
+      ? `<span class="tag" style="background:rgba(255,184,0,.15);color:#FFB800">Estimate</span>` : '';
+    const overdueTag = j.isOverdue
+      ? `<span class="tag" style="background:rgba(255,68,68,.15);color:#FF6B6B">Overdue</span>` : '';
+
+    return `<div class="job-card" style="--jc:${color}" onclick="openModal('${j.id}','${j.type}')">
+      <div class="job-num">${j.num}</div>
+      <div class="job-co">${j.customer}</div>
+      <div class="job-desc">${j.description}</div>
+      <div class="job-tags">${typTag}${estTag}${overdueTag}</div>
+      <div class="job-foot">
+        <span class="job-due ${due.cls}">${due.txt}</span>
+        ${amt?`<span class="job-amt">${amt}</span>`:''}
+      </div>
+      <div class="job-rep"><div class="rep-av">${initials(j.rep)}</div>${j.rep}</div>
+    </div>`;
+  }).join('');
 }
 
 // ── TABLES ──
 function renderOrdersTable() {
-  const tbody = document.getElementById('orders-body');
-  if (orders.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:30px">No orders found</td></tr>';
-    return;
-  }
-  tbody.innerHTML = orders.map(j => `
-    <tr onclick="openModal('${j.orderId}','${j.id}')" style="cursor:pointer">
-      <td class="mono">${j.orderId}</td>
-      <td><strong>${j.customer}</strong></td>
-      <td style="color:var(--muted)">${j.description}</td>
-      <td><span style="font-size:11px">${j.status}${j.substatus && j.substatus!=='—'?' · '+j.substatus:''}</span></td>
-      <td class="mono" style="color:var(--muted)">${fmtDate(j.dueDate)}</td>
-      <td style="color:var(--orange);font-weight:700">${fmtAmt(j.amount)}</td>
-      <td style="color:var(--muted)">${j.rep}</td>
-    </tr>`).join('');
-}
-
-function renderCustomersTable() {
-  const tbody = document.getElementById('customers-body');
-  if (customers.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--dim);padding:30px">No customers loaded</td></tr>';
-    return;
-  }
-  tbody.innerHTML = customers.map(c => `
-    <tr>
-      <td><strong>${c.company}</strong></td>
-      <td>${c.contact}</td>
-      <td style="color:var(--muted)">${c.email}</td>
-      <td class="mono" style="color:var(--muted)">${c.phone}</td>
-      <td style="color:var(--muted)">${c.city}${c.state?', '+c.state:''}</td>
-    </tr>`).join('');
+  document.getElementById('orders-body').innerHTML = allOrders.length === 0
+    ? `<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:30px">No orders</td></tr>`
+    : allOrders.map(j=>`<tr onclick="openModal('${j.id}','order')">
+        <td class="mono">${j.num}</td>
+        <td><strong>${j.customer}</strong></td>
+        <td style="color:var(--muted)">${j.description}</td>
+        <td style="font-size:11px">${j.status}</td>
+        <td class="mono" style="color:var(--muted)">${fmtDate(j.dueDate)}</td>
+        <td style="color:var(--orange);font-weight:700">${fmtAmt(j.amount)}</td>
+        <td style="color:var(--muted)">${j.rep}</td>
+      </tr>`).join('');
 }
 
 function renderEstimatesTable() {
-  const tbody = document.getElementById('estimates-body');
-  if (estimates.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:30px">No estimates loaded</td></tr>';
-    return;
-  }
-  tbody.innerHTML = estimates.map(e => `
-    <tr onclick="openModal('${e.orderId}','${e.id}')" style="cursor:pointer">
-      <td class="mono">${e.orderId}</td>
-      <td><strong>${e.customer}</strong></td>
-      <td style="color:var(--muted)">${e.description}</td>
-      <td style="font-size:11px">${e.status}</td>
-      <td class="mono" style="color:var(--muted)">${fmtDate(e.dueDate)}</td>
-      <td style="color:var(--orange);font-weight:700">${fmtAmt(e.amount)}</td>
-      <td style="color:var(--muted)">${e.rep}</td>
-    </tr>`).join('');
+  document.getElementById('estimates-body').innerHTML = allEstimates.length === 0
+    ? `<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:30px">No estimates loaded</td></tr>`
+    : allEstimates.map(j=>`<tr onclick="openModal('${j.id}','estimate')">
+        <td class="mono">${j.num}</td>
+        <td><strong>${j.customer}</strong></td>
+        <td style="color:var(--muted)">${j.description}</td>
+        <td style="font-size:11px">${j.status}</td>
+        <td class="mono" style="color:var(--muted)">${fmtDate(j.dueDate)}</td>
+        <td style="color:var(--orange);font-weight:700">${fmtAmt(j.amount)}</td>
+        <td style="color:var(--muted)">${j.rep}</td>
+      </tr>`).join('');
 }
 
-// ── REPORTS ──
-function renderReports() {
-  const totalAmt = orders.reduce((s,j) => s + j.amount, 0);
-  const byRep = {};
-  orders.forEach(j => { if (!byRep[j.rep]) byRep[j.rep] = {count:0, amt:0}; byRep[j.rep].count++; byRep[j.rep].amt += j.amount; });
-  const byStatus = {};
-  orders.forEach(j => { if (!byStatus[j.status]) byStatus[j.status]={count:0}; byStatus[j.status].count++; });
-
-  const grid = document.getElementById('reports-grid');
-  grid.innerHTML = `
-    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:20px">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:14px">Production Summary</div>
-      <div style="font-size:32px;font-weight:900;color:#fff">${fmtAmt(totalAmt)}</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">Total active WIP value</div>
-      <div style="margin-top:16px;display:flex;flex-direction:column;gap:6px">
-        ${QUEUES.map(q => {
-          const cnt = orders.filter(q.match).length;
-          if (cnt === 0) return '';
-          return `<div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">${q.name}</span><span style="font-weight:700;color:#fff">${cnt}</span></div>`;
-        }).join('')}
-      </div>
-    </div>
-    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:20px">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:14px">By Sales Rep</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        ${Object.entries(byRep).sort((a,b)=>b[1].amt-a[1].amt).map(([rep, d]) => `
-          <div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-              <span style="font-size:12px;font-weight:600;color:#fff">${rep}</span>
-              <span style="font-size:12px;color:var(--orange);font-weight:700">${fmtAmt(d.amt)}</span>
-            </div>
-            <div style="font-size:11px;color:var(--muted)">${d.count} order${d.count!==1?'s':''}</div>
-          </div>`).join('')}
-      </div>
-    </div>
-    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:20px">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:14px">Pipeline</div>
-      <div style="font-size:28px;font-weight:900;color:#fff">${estimates.length}</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">Open estimates</div>
-      <div style="margin-top:12px;font-size:28px;font-weight:900;color:var(--yellow)">${estimates.filter(e=>e.status.toLowerCase().includes('awaiting customer')).length}</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">Awaiting customer response</div>
-    </div>`;
-}
-
-// ── MODAL ──
-function openModal(orderId, id) {
-  const all = [...orders, ...estimates];
-  currentItem = all.find(j => j.orderId === orderId || j.id === id);
-  if (!currentItem) return;
-  const j = currentItem;
-  document.getElementById('m-num').textContent = j.orderId;
-  document.getElementById('m-co').textContent = j.customer;
-  document.getElementById('m-desc').textContent = j.description;
-  document.getElementById('m-amt').textContent = fmtAmt(j.amount) || '—';
-  document.getElementById('m-status').textContent = j.status || '—';
-  document.getElementById('m-sub').textContent = j.substatus || '—';
-  document.getElementById('m-due').textContent = fmtDateTime(j.dueDate);
-  document.getElementById('m-rep').textContent = j.rep || '—';
-  document.getElementById('m-contact').textContent = j.contact || '—';
-  document.getElementById('m-phone').textContent = j.phone || '—';
-  document.getElementById('m-type').textContent = j.isVended ? '🏭 Outsourced / Vended' : '🏠 In-House Production';
-  document.getElementById('m-email').textContent = j.email || '—';
-  document.getElementById('modal').classList.add('open');
-}
-function closeModal() { document.getElementById('modal').classList.remove('open'); currentItem = null; }
-function copyNum() { if (currentItem) navigator.clipboard.writeText(currentItem.orderId).then(()=>alert('Copied: '+currentItem.orderId)); }
-function findInstaller() { window.open('https://www.google.com/search?q=sign+installer+near+Eatontown+NJ', '_blank'); }
-function findVendor() { if (currentItem) window.open(`https://www.google.com/search?q=${encodeURIComponent(currentItem.description+' sign wholesale vendor')}`, '_blank'); }
-
-// ── FILTERS ──
-function setSearch(q) { searchQ = q; renderQueues(); }
-function buildRepFilters() {
-  const reps = [...new Set(orders.map(j=>j.rep).filter(Boolean))].sort();
-  const container = document.getElementById('rep-filters');
-  const allBtn = document.getElementById('rep-all');
-  if (reps.length > 1) {
-    allBtn.style.display = '';
-    allBtn.classList.add('on');
-    container.innerHTML = reps.map(r =>
-      `<button class="filter-pill" onclick="setRep('${r}',this)" style="margin-left:4px">${r.split(' ')[0]}</button>`
-    ).join('');
-  }
-}
-function setRep(rep, btn) {
-  repFilter = rep;
-  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  renderQueues();
-}
-function highlightQueue(id) {
-  document.getElementById(`qcol-${id}`)?.scrollIntoView({behavior:'smooth', block:'start'});
-}
-function filterTable(tableId, q) {
-  const rows = document.querySelectorAll(`#${tableId} tbody tr`);
-  rows.forEach(r => {
+function filterTbl(tbodyId, q) {
+  document.querySelectorAll(`#${tbodyId} tr`).forEach(r=>{
     r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
   });
 }
 
+// ── REPORTS ──
+function renderReports() {
+  const allItems = [...allOrders, ...allEstimates];
+  const totalWIP = allOrders.reduce((s,j)=>s+j.amount,0);
+  const byRep = {};
+  allOrders.forEach(j=>{ if(!byRep[j.rep]) byRep[j.rep]={count:0,amt:0}; byRep[j.rep].count++; byRep[j.rep].amt+=j.amount; });
+  const overdue = allItems.filter(j=>j.isOverdue);
+
+  document.getElementById('report-grid').innerHTML = `
+    <div class="report-card">
+      <div class="rc-title">WIP Summary</div>
+      <div class="rc-big">${fmtAmt(totalWIP)}</div>
+      <div class="rc-sub">Total active order value</div>
+      ${QUEUES.filter(q=>q.id!=='all'&&q.id!=='overdue').map(q=>{
+        const cnt = allOrders.filter(q.filter).length;
+        return cnt>0?`<div class="rc-row"><span style="color:var(--muted)">${q.name}</span><span style="font-weight:700">${cnt}</span></div>`:'';
+      }).join('')}
+    </div>
+    <div class="report-card">
+      <div class="rc-title">By Sales Rep</div>
+      ${Object.entries(byRep).sort((a,b)=>b[1].amt-a[1].amt).map(([rep,d])=>`
+        <div class="rc-row">
+          <span style="font-weight:600">${rep}</span>
+          <div style="text-align:right">
+            <div style="color:var(--orange);font-weight:700">${fmtAmt(d.amt)}</div>
+            <div style="font-size:10px;color:var(--dim)">${d.count} order${d.count!==1?'s':''}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="report-card">
+      <div class="rc-title">Pipeline</div>
+      <div class="rc-big">${allEstimates.length}</div>
+      <div class="rc-sub">Open estimates</div>
+      <div class="rc-big" style="color:var(--red);margin-top:16px">${overdue.length}</div>
+      <div class="rc-sub">Overdue items</div>
+    </div>`;
+}
+
+// ── MODAL ──
+function openModal(id, type) {
+  const all = [...allOrders, ...allEstimates];
+  currentItem = all.find(j=>j.id===id&&j.type===type) || all.find(j=>j.id===id);
+  if (!currentItem) return;
+  const j = currentItem;
+  document.getElementById('m-num').textContent = j.num;
+  document.getElementById('m-co').textContent = j.customer;
+  document.getElementById('m-desc').textContent = j.description;
+  document.getElementById('m-amt').textContent = fmtAmt(j.amount)||'—';
+  document.getElementById('m-status').textContent = j.status||'—';
+  document.getElementById('m-rep').textContent = j.rep||'—';
+  document.getElementById('m-due').textContent = fmtDate(j.dueDate);
+  document.getElementById('m-contact').textContent = j.contact||'—';
+  document.getElementById('m-email').textContent = j.email||'—';
+  document.getElementById('m-type').textContent = j.isVended?'🏭 Outsourced':'🏠 In-House';
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); currentItem=null; }
+function copyNum(){ if(currentItem) navigator.clipboard.writeText(currentItem.num).then(()=>alert('Copied: '+currentItem.num)); }
+function findInstaller(){ window.open('https://www.google.com/search?q=sign+installer+near+Eatontown+NJ','_blank'); }
+function findVendor(){ if(currentItem) window.open(`https://www.google.com/search?q=${encodeURIComponent(currentItem.description+' sign wholesale vendor')},'_blank`); }
+
+// ── FILTERS ──
+function setQueue(id) {
+  activeQueue = id;
+  renderQueueTabs();
+  renderQueueGrid();
+}
+function setSearch(q){ searchQ=q; renderQueueGrid(); }
+function buildRepFilters(){
+  const reps=[...new Set(allOrders.map(j=>j.rep).filter(Boolean))].sort();
+  if(reps.length<2) return;
+  document.getElementById('rep-btns').innerHTML =
+    `<button class="rep-pill on" onclick="setRep('all',this)">All Reps</button>` +
+    reps.map(r=>`<button class="rep-pill" onclick="setRep('${r}',this)" style="margin-left:4px">${r.split(' ')[0]}</button>`).join('');
+}
+function setRep(rep,btn){
+  activeRep=rep;
+  document.querySelectorAll('.rep-pill').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderQueueGrid();
+}
+
 // ── PAGE NAV ──
-function showPage(name, btn) {
+function showPage(name,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
@@ -904,11 +610,9 @@ function showPage(name, btn) {
 }
 
 // ── LOADER ──
-function showLoader(txt) { document.getElementById('loader').classList.add('open'); document.getElementById('load-txt').textContent = txt; }
-function setLoader(txt) { document.getElementById('load-txt').textContent = txt; }
-function hideLoader() { document.getElementById('loader').classList.remove('open'); }
+function showLoader(t){ document.getElementById('loader').classList.add('open'); document.getElementById('load-txt').textContent=t; }
+function hideLoader(){ document.getElementById('loader').classList.remove('open'); }
 
-// ── INIT ──
 window.addEventListener('DOMContentLoaded', loadAll);
 </script>
 </body>
