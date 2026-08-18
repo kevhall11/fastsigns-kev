@@ -14,6 +14,7 @@
   <div class="hcenter"><div class="nav-tabs">
     <button class="nav-tab active" onclick="showPage('queues',this)">Queues</button>
     <button class="nav-tab" onclick="showPage('orders',this)">Orders</button>
+    <button class="nav-tab" onclick="showPage('production',this)">Production</button>
     <button class="nav-tab" onclick="showPage('estimates',this)">Estimates</button>
     <button class="nav-tab" onclick="showPage('customers',this)">Customers</button>
     <button class="nav-tab" onclick="showPage('reports',this)">Reports</button>
@@ -32,6 +33,22 @@
   <div class="subtabs"><button class="stab active" onclick="setOrderTab('active',this)">Active Jobs</button><button class="stab" onclick="setOrderTab('completed',this)">Completed Jobs</button></div>
   <div class="toolbar"><input class="search" placeholder="Search orders..." oninput="filterOrders(this.value)"/><span class="ml count" id="o-count"></span></div>
   <div class="tbl-wrap"><table><thead><tr><th>Order #</th><th>Customer</th><th>Description</th><th>Status</th><th>Due Date</th><th>Amount</th><th>Rep</th></tr></thead><tbody id="orders-body"></tbody></table></div>
+</div>
+<div class="page" id="page-production">
+  <div class="stats production-summary" id="production-summary"></div>
+  <div class="toolbar">
+    <input class="search" placeholder="Search customer, order #, product..." oninput="filterProduction(this.value)"/>
+    <select class="production-status" onchange="setProductionQueue(this.value)">
+      <option value="all">All products</option>
+      <option value="design-due">Design due soon</option>
+      <option value="production-due">Production due soon</option>
+      <option value="overdue">Overdue</option>
+      <option value="missing-dates">Missing dates</option>
+      <option value="vended">Vended</option>
+    </select>
+    <span class="ml count" id="production-count"></span>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr><th>Order #</th><th>Customer</th><th>Product</th><th>Status</th><th>Designer</th><th>Design Due</th><th>Production Due</th><th>Location</th><th>Qty</th></tr></thead><tbody id="production-body"></tbody></table></div>
 </div>
 <div class="page" id="page-estimates">
   <div class="est-summary" id="est-summary"></div>

@@ -1,10 +1,12 @@
-import { apiFetch } from './api.js';
-import { QUEUES, mapRecord } from './data.js';
-import { dueLbl, fmtAmt, fmtAmtOrDash, fmtDate, initials } from './formatting.js';
+import { apiFetch, fetchProductionData } from './api.js';
+import { QUEUES, joinProductionData, mapRecord, summarizeProduction } from './data.js';
+import { daysUntil, dueLbl, escapeHtml, fmtAmt, fmtAmtOrDash, fmtDate, initials } from './formatting.js';
 
 let allOrders = [], allEstimates = [], allCompleted = [];
+let allProducts = [];
 let activeQueue = 'all', searchQ = '', activeRep = 'all';
 let activeOrderTab = 'active', orderSearch = '', estSearch = '', estFilter = 'all';
+let productionSearch = '', productionQueue = 'all';
 let currentItem = null;
 
 function showLoader(text) {
@@ -39,6 +41,13 @@ async function loadAll() {
 
     const seen = new Set();
     allOrders = allOrders.filter(item => !seen.has(item.id) && seen.add(item.id));
+    try {
+      const production = await fetchProductionData();
+      allProducts = joinProductionData(production.products, production.parts, [...allOrders, ...allEstimates, ...allCompleted]);
+    } catch (error) {
+      allProducts = [];
+      console.warn('Production data', error.message);
+    }
     renderAll(); buildRepFilters(); buildCustomerList();
     document.getElementById('sync-dot').className = 'sync-dot live';
     document.getElementById('sync-txt').textContent = `Live · ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
@@ -47,7 +56,7 @@ async function loadAll() {
   } finally { hideLoader(); button.classList.remove('spinning'); }
 }
 
-function renderAll() { renderQStats(); renderQTabs(); renderQGrid(); renderOrdersTable(); renderEstimates(); renderReports(); }
+function renderAll() { renderQStats(); renderQTabs(); renderQGrid(); renderOrdersTable(); renderProduction(); renderEstimates(); renderReports(); }
 function renderQStats() {
   const all = [...allOrders, ...allEstimates];
   const counts = {
@@ -81,6 +90,35 @@ function renderOrdersTable() {
   const filtered = orderSearch ? items.filter(item => matches(item, orderSearch)) : items;
   document.getElementById('o-count').textContent = `${filtered.length} order${filtered.length !== 1 ? 's' : ''}`;
   document.getElementById('orders-body').innerHTML = filtered.length ? filtered.map(item => `<tr onclick="openModal('${item.id}','order')"><td class="mono">${item.num}</td><td><strong>${item.customer}</strong></td><td style="color:var(--muted)">${item.description}</td><td style="font-size:11px">${item.status}</td><td class="mono">${fmtDate(item.dueDate)}</td><td style="color:var(--orange);font-weight:700">${fmtAmt(item.amount)}</td><td style="color:var(--muted)">${item.rep}</td></tr>`).join('') : `<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:30px">${activeOrderTab === 'active' ? 'No active orders' : 'No completed orders found'}</td></tr>`;
+}
+function renderProduction() {
+  const counts = {
+    total: allProducts.length,
+    design: allProducts.filter(item => item.designDue).length,
+    production: allProducts.filter(item => item.productionDue).length,
+    vended: allProducts.filter(item => item.isVended).length,
+  };
+  document.getElementById('production-summary').innerHTML = [
+    ['orange', 'Products', counts.total, 'Loaded product records'],
+    ['teal', 'Design dates', counts.design, 'Products with design due dates'],
+    ['blue', 'Production dates', counts.production, 'Products with production due dates'],
+    ['purple', 'Vended', counts.vended, 'Outsourced products'],
+  ].map(([color, label, value, sub]) => `<div class="stat" style="--sc:var(--${color})"><div class="stat-lbl">${label}</div><div class="stat-val">${value}</div><div class="stat-sub">${sub}</div></div>`).join('');
+
+  let products = allProducts;
+  const dueSoon = date => date && daysUntil(date) >= 0 && daysUntil(date) <= 3;
+  const overdue = date => date && daysUntil(date) < 0;
+  if (productionQueue === 'design-due') products = products.filter(item => dueSoon(item.designDue));
+  if (productionQueue === 'production-due') products = products.filter(item => dueSoon(item.productionDue));
+  if (productionQueue === 'overdue') products = products.filter(item => overdue(item.designDue) || overdue(item.productionDue));
+  if (productionQueue === 'missing-dates') products = products.filter(item => !item.designDue || !item.productionDue);
+  if (productionQueue === 'vended') products = products.filter(item => item.isVended);
+  if (productionSearch) {
+    const query = productionSearch.toLowerCase();
+    products = products.filter(item => [item.order?.customer, item.orderId, item.description, item.category, item.status, item.designer, item.productionLocation].some(value => String(value || '').toLowerCase().includes(query)));
+  }
+  document.getElementById('production-count').textContent = `${products.length} product${products.length === 1 ? '' : 's'}`;
+  document.getElementById('production-body').innerHTML = products.length ? products.map(item => `<tr${item.order ? ` onclick="openModal('${item.order.id}','order')"` : ''}><td class="mono">${escapeHtml(item.order?.num || item.orderId)}</td><td><strong>${escapeHtml(item.order?.customer || '—')}</strong></td><td>${escapeHtml(item.description)}</td><td style="font-size:11px">${escapeHtml(item.status)}</td><td style="color:var(--muted)">${escapeHtml(item.designer)}</td><td class="mono">${fmtDate(item.designDue)}</td><td class="mono">${fmtDate(item.productionDue)}</td><td style="color:var(--muted)">${escapeHtml(item.productionLocation)}</td><td>${item.quantity}</td></tr>`).join('') : '<tr><td colspan="9" style="text-align:center;color:var(--dim);padding:30px">No production products found</td></tr>';
 }
 function renderEstimates() {
   const open = allEstimates.filter(item => !item.isDead), dead = allEstimates.filter(item => item.isDead);
@@ -118,9 +156,10 @@ function selectCustomer(encodedName) {
 }
 function renderReports() {
   const active = [...allOrders, ...allEstimates], byRep = {};
+  const production = summarizeProduction(allProducts);
   allOrders.forEach(item => { byRep[item.rep] ||= { count: 0, amount: 0 }; byRep[item.rep].count++; byRep[item.rep].amount += item.amount; });
   const rows = QUEUES.filter(queue => queue.id !== 'all' && queue.id !== 'overdue').map(queue => { const count = allOrders.filter(queue.f).length; return count ? `<div class="rc-row"><span style="color:var(--muted)">${queue.name}</span><span style="font-weight:700">${count}</span></div>` : ''; }).join('');
-  document.getElementById('report-grid').innerHTML = `<div class="rc"><div class="rc-title">Production Summary</div><div class="rc-big">${fmtAmt(allOrders.reduce((sum, item) => sum + item.amount, 0)) || '$0'}</div><div class="rc-sub">Active WIP value</div>${rows}</div><div class="rc"><div class="rc-title">By Sales Rep</div>${Object.entries(byRep).sort((a, b) => b[1].amount - a[1].amount).map(([rep, data]) => `<div class="rc-row"><span style="font-weight:600">${rep.split(' ')[0]}</span><div style="text-align:right"><div style="color:var(--orange);font-weight:700">${fmtAmt(data.amount)}</div><div style="font-size:10px;color:var(--dim)">${data.count} order${data.count !== 1 ? 's' : ''}</div></div></div>`).join('')}</div><div class="rc"><div class="rc-title">Estimate Pipeline</div><div class="rc-big" style="color:var(--yellow)">${fmtAmt(allEstimates.filter(item => !item.isDead).reduce((sum, item) => sum + item.amount, 0)) || '$0'}</div><div class="rc-sub">Open estimate value</div><div class="rc-row"><span style="color:var(--muted)">Total estimates</span><span style="font-weight:700">${allEstimates.length}</span></div><div class="rc-row"><span style="color:var(--muted)">Dead / Lost</span><span style="font-weight:700;color:var(--red)">${allEstimates.filter(item => item.isDead).length}</span></div><div class="rc-row"><span style="color:var(--muted)">Overdue items</span><span style="font-weight:700;color:var(--red)">${active.filter(item => item.isOverdue).length}</span></div></div>`;
+  document.getElementById('report-grid').innerHTML = `<div class="rc"><div class="rc-title">Production Summary</div><div class="rc-big">${fmtAmt(allOrders.reduce((sum, item) => sum + item.amount, 0)) || '$0'}</div><div class="rc-sub">Active WIP value</div>${rows}</div><div class="rc"><div class="rc-title">By Sales Rep</div>${Object.entries(byRep).sort((a, b) => b[1].amount - a[1].amount).map(([rep, data]) => `<div class="rc-row"><span style="font-weight:600">${rep.split(' ')[0]}</span><div style="text-align:right"><div style="color:var(--orange);font-weight:700">${fmtAmt(data.amount)}</div><div style="font-size:10px;color:var(--dim)">${data.count} order${data.count !== 1 ? 's' : ''}</div></div></div>`).join('')}</div><div class="rc"><div class="rc-title">Estimate Pipeline</div><div class="rc-big" style="color:var(--yellow)">${fmtAmt(allEstimates.filter(item => !item.isDead).reduce((sum, item) => sum + item.amount, 0)) || '$0'}</div><div class="rc-sub">Open estimate value</div><div class="rc-row"><span style="color:var(--muted)">Total estimates</span><span style="font-weight:700">${allEstimates.length}</span></div><div class="rc-row"><span style="color:var(--muted)">Dead / Lost</span><span style="font-weight:700;color:var(--red)">${allEstimates.filter(item => item.isDead).length}</span></div><div class="rc-row"><span style="color:var(--muted)">Overdue items</span><span style="font-weight:700;color:var(--red)">${active.filter(item => item.isOverdue).length}</span></div></div><div class="rc"><div class="rc-title">Product Margin</div><div class="rc-big" style="color:var(--green)">${fmtAmt(production.margin) || '$0'}</div><div class="rc-sub">${production.marginPercent}% gross margin</div><div class="rc-row"><span style="color:var(--muted)">Product revenue</span><span style="font-weight:700">${fmtAmt(production.revenue) || '$0'}</span></div><div class="rc-row"><span style="color:var(--muted)">Product cost</span><span style="font-weight:700;color:var(--red)">${fmtAmt(production.cost) || '$0'}</span></div></div><div class="rc"><div class="rc-title">Product Categories</div>${Object.entries(production.categories).sort((a, b) => b[1] - a[1]).map(([category, amount]) => `<div class="rc-row"><span style="color:var(--muted)">${escapeHtml(category)}</span><span style="font-weight:700">${fmtAmt(amount) || '$0'}</span></div>`).join('') || '<div class="rc-sub">No product data</div>'}</div><div class="rc"><div class="rc-title">Parts Workload</div><div class="rc-big">${production.parts}</div><div class="rc-sub">Linked product parts</div><div class="rc-row"><span style="color:var(--muted)">Total part quantity</span><span style="font-weight:700">${production.partQuantity}</span></div></div>`;
 }
 
 function openModal(id, type) {
@@ -138,6 +177,8 @@ function setQueue(id) { activeQueue = id; renderQTabs(); renderQGrid(); }
 function setSearch(query) { searchQ = query; renderQGrid(); }
 function setOrderTab(tab, button) { activeOrderTab = tab; document.querySelectorAll('.stab').forEach(item => item.classList.remove('active')); button.classList.add('active'); renderOrdersTable(); }
 function filterOrders(query) { orderSearch = query; renderOrdersTable(); }
+function filterProduction(query) { productionSearch = query; renderProduction(); }
+function setProductionQueue(queue) { productionQueue = queue; renderProduction(); }
 function filterEstimates(query) { estSearch = query; renderEstimates(); }
 function setEstFilter(filter, button) { estFilter = filter; document.querySelectorAll('#page-estimates .pill').forEach(item => item.classList.remove('on')); button.classList.add('on'); renderEstimates(); }
 function buildRepFilters() {
@@ -148,5 +189,5 @@ function buildRepFilters() {
 function setRep(rep, button) { activeRep = rep; document.querySelectorAll('#rep-btns .pill').forEach(item => item.classList.remove('on')); button.classList.add('on'); renderQGrid(); }
 function showPage(name, button) { document.querySelectorAll('.page').forEach(page => page.classList.remove('active')); document.querySelectorAll('.nav-tab').forEach(item => item.classList.remove('active')); document.getElementById('page-' + name).classList.add('active'); button.classList.add('active'); }
 
-Object.assign(window, { loadAll, showPage, setQueue, setSearch, setOrderTab, filterOrders, filterEstimates, setEstFilter, setRep, filterCustomers, selectCustomer, openModal, closeModal, copyNum, findInstaller, findVendor });
+Object.assign(window, { loadAll, showPage, setQueue, setSearch, setOrderTab, filterOrders, filterProduction, setProductionQueue, filterEstimates, setEstFilter, setRep, filterCustomers, selectCustomer, openModal, closeModal, copyNum, findInstaller, findVendor });
 window.addEventListener('DOMContentLoaded', loadAll);

@@ -10,3 +10,11 @@ export async function apiFetch(endpoint, action, extra) {
   if (data && data.error) throw new Error(data.error);
   return Array.isArray(data) ? data : [];
 }
+
+export async function fetchProductionData() {
+  const [products, parts] = await Promise.all([
+    apiFetch('ExOrderProduct'),
+    apiFetch('ExOrderProductPart'),
+  ]);
+  return { products, parts };
+}

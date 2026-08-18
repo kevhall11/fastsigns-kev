@@ -1,9 +1,10 @@
 // Vercel Serverless Function — Corebridge API Proxy
 module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  if (process.env.DASHBOARD_ORIGIN) res.setHeader('Access-Control-Allow-Origin', process.env.DASHBOARD_ORIGIN);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   const API_KEY = process.env.COREBRIDGE_API_KEY;
   const BASE_URL = process.env.COREBRIDGE_BASE_URL || 'https://fs2498.v2api.corebridge.net/api/public';
@@ -17,14 +18,14 @@ module.exports = async function handler(req, res) {
   const endpoint = req.query.endpoint || 'ExOrder';
   const action = req.query.action || '';
 
-  const allowedBases = [
-    'ExOrder', 'ExOrderDetail', 'ExOrderProduct', 'ExOrderProductPart',
-    'ExEstimate', 'ExCustomer', 'ExEmployee', 'ExSalesperson',
-    'ExVendorPurchaseOrder', 'ExContact'
-  ];
+  const allowedBases = ['ExOrder', 'ExOrderProduct', 'ExOrderProductPart'];
+  const allowedActions = { ExOrder: new Set(['', 'GetOrdersByStatus']), ExOrderProduct: new Set(['']), ExOrderProductPart: new Set(['']) };
 
   if (!allowedBases.includes(endpoint)) {
     return res.status(400).json({ error: 'Endpoint not allowed: ' + endpoint });
+  }
+  if (!allowedActions[endpoint].has(action)) {
+    return res.status(400).json({ error: 'Action not allowed: ' + action });
   }
 
   try {
@@ -38,7 +39,7 @@ module.exports = async function handler(req, res) {
     console.log('Proxying to:', url);
 
     const fetchOptions = {
-      method: req.method === 'POST' ? 'POST' : 'GET',
+      method: 'GET',
       headers: {
         'Authorization': `BASIC ${API_KEY}`,
         'ApiTag': API_KEY,
@@ -46,11 +47,6 @@ module.exports = async function handler(req, res) {
         'Accept': 'application/json'
       }
     };
-
-    // Forward POST body if present
-    if (req.method === 'POST' && req.body) {
-      fetchOptions.body = JSON.stringify(req.body);
-    }
 
     const response = await fetch(url, fetchOptions);
     const text = await response.text();
