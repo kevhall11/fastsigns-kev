@@ -1,0 +1,12 @@
+# Keep source and configuration files consistent across platforms.
+* text=auto eol=lf
+
+# Treat common generated and media files as binary.
+*.gif binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary
+*.pdf binary
+*.zip binary

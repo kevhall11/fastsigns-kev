@@ -5,8 +5,12 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const API_KEY = '3e6ed1d8-a81a-4fbb-9fbe-f33dff30ad6d';
-  const BASE_URL = 'https://fs2498.v2api.corebridge.net/api/public';
+  const API_KEY = process.env.COREBRIDGE_API_KEY;
+  const BASE_URL = process.env.COREBRIDGE_BASE_URL || 'https://fs2498.v2api.corebridge.net/api/public';
+
+  if (!API_KEY) {
+    return res.status(500).json({ error: 'COREBRIDGE_API_KEY is not configured' });
+  }
 
   // endpoint = base (e.g. ExOrder)
   // action = sub-path (e.g. GetOrdersByStatus)
