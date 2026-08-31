@@ -2,6 +2,7 @@
   "name": "fastsigns-dashboard",
   "private": true,
   "scripts": {
+    "start": "node server.js",
     "dev": "node local-server.js"
   },
   "engines": {
