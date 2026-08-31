@@ -3,68 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FastSigns Eatontown — Operations Hub</title>
+<title>FastSigns | Company Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<div class="loader" id="loader"><div class="ring"></div><div class="load-txt" id="load-txt">Connecting to Corebridge...</div></div>
-<header>
-  <div class="logo">FS</div>
-  <div><div class="logo-title">FastSigns Eatontown</div><div class="logo-sub">Operations Hub</div></div>
-  <div class="hcenter"><div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('queues',this)">Queues</button>
-    <button class="nav-tab" onclick="showPage('orders',this)">Orders</button>
-    <button class="nav-tab" onclick="showPage('production',this)">Production</button>
-    <button class="nav-tab" onclick="showPage('estimates',this)">Estimates</button>
-    <button class="nav-tab" onclick="showPage('customers',this)">Customers</button>
-    <button class="nav-tab" onclick="showPage('reports',this)">Reports</button>
-  </div></div>
-  <div class="hright">
-    <div class="sync-dot" id="sync-dot"></div><span class="sync-txt" id="sync-txt">Loading...</span>
-    <button class="rbtn" id="refresh-btn" onclick="loadAll()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Refresh</button>
-  </div>
-</header>
-<div class="page active" id="page-queues">
-  <div class="stats" id="q-stats"></div><div class="qtabs" id="q-tabs"></div>
-  <div class="toolbar"><input class="search" placeholder="Search customer, order #, product..." oninput="setSearch(this.value)"/><div id="rep-btns" style="display:flex;gap:4px;flex-wrap:wrap"></div><span class="ml count" id="q-count"></span></div>
-  <div class="grid" id="q-grid"></div>
-</div>
-<div class="page" id="page-orders">
-  <div class="subtabs"><button class="stab active" onclick="setOrderTab('active',this)">Active Jobs</button><button class="stab" onclick="setOrderTab('completed',this)">Completed Jobs</button></div>
-  <div class="toolbar"><input class="search" placeholder="Search orders..." oninput="filterOrders(this.value)"/><span class="ml count" id="o-count"></span></div>
-  <div class="tbl-wrap"><table><thead><tr><th>Order #</th><th>Customer</th><th>Description</th><th>Status</th><th>Due Date</th><th>Amount</th><th>Rep</th></tr></thead><tbody id="orders-body"></tbody></table></div>
-</div>
-<div class="page" id="page-production">
-  <div class="stats production-summary" id="production-summary"></div>
-  <div class="toolbar">
-    <input class="search" placeholder="Search customer, order #, product..." oninput="filterProduction(this.value)"/>
-    <select class="production-status" onchange="setProductionQueue(this.value)">
-      <option value="all">All products</option>
-      <option value="design-due">Design due soon</option>
-      <option value="production-due">Production due soon</option>
-      <option value="overdue">Overdue</option>
-      <option value="missing-dates">Missing dates</option>
-      <option value="vended">Vended</option>
-    </select>
-    <span class="ml count" id="production-count"></span>
-  </div>
-  <div class="tbl-wrap"><table><thead><tr><th>Order #</th><th>Customer</th><th>Product</th><th>Status</th><th>Designer</th><th>Design Due</th><th>Production Due</th><th>Location</th><th>Qty</th></tr></thead><tbody id="production-body"></tbody></table></div>
-</div>
-<div class="page" id="page-estimates">
-  <div class="est-summary" id="est-summary"></div>
-  <div class="toolbar"><input class="search" placeholder="Search estimates..." oninput="filterEstimates(this.value)" id="est-search"/><button class="pill on" onclick="setEstFilter('all',this)">All</button><button class="pill" onclick="setEstFilter('open',this)">Open</button><button class="pill" onclick="setEstFilter('dead',this)">Dead / Lost</button><span class="ml count" id="est-count"></span></div>
-  <div id="est-buckets"></div>
-</div>
-<div class="page" id="page-customers">
-  <div class="cust-layout"><div class="cust-list"><div class="cust-search-wrap"><input class="search" style="width:100%" placeholder="Search customers..." oninput="filterCustomers(this.value)"/></div><div class="cust-items" id="cust-items"></div></div><div class="cust-detail" id="cust-detail"><div class="no-selection">← Select a customer to view details</div></div></div>
-</div>
-<div class="page" id="page-reports"><div class="report-grid" id="report-grid"></div></div>
-<div class="overlay" id="modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal"><div class="modal-top"><div><div class="modal-num" id="m-num"></div><div class="modal-co" id="m-co"></div></div><button class="modal-x" onclick="closeModal()">✕</button></div>
-    <div class="modal-body"><div class="m2"><div class="mf"><label>Description</label><div class="v" id="m-desc"></div></div><div class="mf"><label>Amount</label><div class="v" id="m-amt"></div></div></div><div class="m2"><div class="mf"><label>Status</label><div class="v" id="m-status"></div></div><div class="mf"><label>Rep</label><div class="v" id="m-rep"></div></div></div><div class="m2"><div class="mf"><label>Due Date</label><div class="v" id="m-due"></div></div><div class="mf"><label>Created</label><div class="v" id="m-created"></div></div></div><hr class="mdiv"><div class="m2"><div class="mf"><label>Contact</label><div class="v" id="m-contact"></div></div><div class="mf"><label>Email</label><div class="v" id="m-email"></div></div></div><div class="m2"><div class="mf"><label>Production</label><div class="v" id="m-type"></div></div><div class="mf"><label>Phone</label><div class="v" id="m-phone"></div></div></div></div>
-    <div class="modal-acts"><button class="abtn" onclick="copyNum()">📋 Copy #</button><button class="abtn" onclick="findInstaller()">🔧 Find Installer</button><button class="abtn primary" onclick="findVendor()">🏭 Find Vendor</button></div>
-  </div>
-</div>
+<header class="topbar"><div class="brand"><span class="brand-mark">FS</span><span><strong>FastSigns</strong><small>Company operations</small></span></div><div class="header-actions"><span class="status"><i id="status-dot"></i><span id="status-text">Connecting</span></span><button id="refresh" class="button button-dark" type="button">Refresh data</button></div></header>
+<main class="shell">
+  <section class="intro"><div><p class="eyebrow">Operations overview</p><h1>Know what is moving.</h1><p class="lede">A live view of orders, production, and company performance from CoreBridge.</p></div><div class="updated" id="updated">Waiting for data</div></section>
+  <section class="kpis" id="kpis" aria-live="polite"></section>
+  <section class="workspace">
+    <aside class="companies panel"><div class="panel-heading"><div><p class="eyebrow">Portfolio</p><h2>Companies</h2></div><span class="count" id="company-count">0</span></div><label class="search-label" for="company-search">Find a company</label><input id="company-search" class="input" type="search" placeholder="Search companies..." autocomplete="off"><div id="company-list" class="company-list"></div></aside>
+    <section class="orders panel"><div class="panel-heading"><div><p class="eyebrow">Live work queue</p><h2 id="orders-title">All orders</h2><div class="match-count" id="match-count">0 orders</div></div><div class="table-tools"><select id="status-filter" class="input"><option value="all">All statuses</option></select><select id="sort-filter" class="input"><option value="order-asc">Order number: low to high</option><option value="order-desc">Order number: high to low</option><option value="due-asc">Due date: oldest first</option><option value="due-desc" selected>Due date: newest first</option><option value="created-asc">Created date: oldest first</option><option value="created-desc">Created date: newest first</option></select><input id="order-search" class="input" type="search" placeholder="Search orders..." autocomplete="off"><button id="clear-filters" class="button button-light" type="button">Clear</button></div></div><div class="table-wrap"><table><thead><tr><th>Order</th><th>Company</th><th>Description</th><th>Status</th><th>Due</th><th class="number">Value</th></tr></thead><tbody id="orders-body"></tbody></table></div><div id="empty" class="empty" hidden>No orders match your filters.</div></section>
+  </section>
+</main>
+<div id="error" class="error" hidden></div>
+<div id="order-modal" class="modal" hidden><div class="modal-backdrop" data-close-modal></div><section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-header"><div><p class="eyebrow">Order details</p><h2 id="modal-title">Order</h2></div><button class="modal-close" type="button" data-close-modal aria-label="Close order details">&times;</button></div><div id="order-detail" class="order-detail"></div></section></div>
 <script type="module" src="/js/app.js"></script>
 </body>
 </html>

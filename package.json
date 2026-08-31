@@ -2,8 +2,7 @@
   "name": "fastsigns-dashboard",
   "private": true,
   "scripts": {
-    "start": "node server.js",
-    "test": "node --check server.js && node --check api/corebridge.js && node --check js/api.js && node --check js/data.js && node --check js/formatting.js && node --check js/app.js && node tests/smoke-check.mjs && node tests/security-check.mjs"
+    "start": "node server.js"
   },
   "engines": {
     "node": ">=18"

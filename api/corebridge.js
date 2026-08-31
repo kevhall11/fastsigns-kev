@@ -9,65 +9,31 @@ module.exports = async function handler(req, res) {
   const API_KEY = process.env.COREBRIDGE_API_KEY;
   const BASE_URL = process.env.COREBRIDGE_BASE_URL || 'https://fs2498.v2api.corebridge.net/api/public';
 
-  if (!API_KEY) {
-    return res.status(500).json({ error: 'COREBRIDGE_API_KEY is not configured' });
-  }
+  if (!API_KEY) return res.status(500).json({ error: 'COREBRIDGE_API_KEY is not configured' });
 
-  // endpoint = base (e.g. ExOrder)
-  // action = sub-path (e.g. GetOrdersByStatus)
   const endpoint = req.query.endpoint || 'ExOrder';
   const action = req.query.action || '';
+  const allowedBases = new Set(['ExOrder', 'ExOrderProduct', 'ExOrderProductPart']);
+  const allowedActions = new Set(['', 'GetOrdersByStatus']);
+  if (!allowedBases.has(endpoint)) return res.status(400).json({ error: 'Endpoint not allowed' });
+  if (!allowedActions.has(action)) return res.status(400).json({ error: 'Action not allowed' });
 
-  const allowedBases = ['ExOrder', 'ExOrderProduct', 'ExOrderProductPart'];
-  const allowedActions = { ExOrder: new Set(['', 'GetOrdersByStatus']), ExOrderProduct: new Set(['']), ExOrderProductPart: new Set(['']) };
-
-  if (!allowedBases.includes(endpoint)) {
-    return res.status(400).json({ error: 'Endpoint not allowed: ' + endpoint });
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(req.query)) {
+    if (key !== 'endpoint' && key !== 'action' && value !== undefined) params.set(key, value);
   }
-  if (!allowedActions[endpoint].has(action)) {
-    return res.status(400).json({ error: 'Action not allowed: ' + action });
-  }
+  const resource = action ? `${endpoint}/${action}` : endpoint;
+  const url = `${BASE_URL.replace(/\/$/, '')}/${resource}${params.toString() ? `?${params}` : ''}`;
 
   try {
-    const params = Object.assign({}, req.query);
-    delete params.endpoint;
-    delete params.action;
-    const qs = new URLSearchParams(params).toString();
-    const path = action ? `${endpoint}/${action}` : endpoint;
-    const url = `${BASE_URL}/${path}${qs ? '?' + qs : ''}`;
-
-    console.log('Proxying to:', url);
-
-    const fetchOptions = {
-      method: 'GET',
-      headers: {
-        'Authorization': `BASIC ${API_KEY}`,
-        'ApiTag': API_KEY,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    };
-
-    const response = await fetch(url, fetchOptions);
+    const response = await fetch(url, {
+      headers: { Authorization: `BASIC ${API_KEY}`, ApiTag: API_KEY, Accept: 'application/json' },
+    });
     const text = await response.text();
-    console.log('Status:', response.status, '| Preview:', text.substring(0, 200));
-
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: 'Corebridge API error',
-        status: response.status,
-        detail: text,
-        url_called: url
-      });
-    }
-
-    try {
-      return res.status(200).json(JSON.parse(text));
-    } catch {
-      return res.status(200).send(text);
-    }
-
-  } catch (err) {
-    return res.status(500).json({ error: 'Proxy failed', message: err.message });
+    if (!response.ok) return res.status(response.status).json({ error: 'CoreBridge API error', status: response.status });
+    try { return res.status(200).json(JSON.parse(text)); } catch { return res.status(200).send(text); }
+  } catch (error) {
+    return res.status(502).json({ error: 'Unable to reach CoreBridge', message: error.message });
   }
 };
+
