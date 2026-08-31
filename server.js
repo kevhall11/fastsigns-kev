@@ -8,7 +8,7 @@ loadEnvFile(path.join(__dirname, '.env'));
 const corebridgeHandler = require('./api/corebridge');
 const publicRoot = __dirname;
 const port = Number(process.env.PORT || 3000);
-const host = process.env.HOST || '127.0.0.1';
+const host = '0.0.0.0';
 const mimeTypes = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
