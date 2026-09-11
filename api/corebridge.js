@@ -17,7 +17,7 @@ module.exports = async function corebridge(req, res) {
   const apiKey = process.env.COREBRIDGE_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'COREBRIDGE_API_KEY is not configured' });
 
-  const query = req.query || {};
+  const query = req.query || Object.fromEntries(new URL(req.url || '/', 'http://localhost').searchParams);
   const endpoint = first(query.endpoint) || 'ExOrder';
   const action = first(query.action) || '';
   if (!RESOURCES.has(endpoint)) return res.status(400).json({ error: 'Endpoint not allowed' });
