@@ -1,7 +1,0 @@
-{
-  "name": "fastsigns-dashboard",
-  "private": true,
-  "engines": {
-    "node": ">=18"
-  }
-}
