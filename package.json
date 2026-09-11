@@ -1,6 +1,7 @@
 {
   "name": "fastsigns-dashboard",
   "private": true,
+  "main": "api/corebridge.js",
   "engines": {
     "node": ">=18"
   }
