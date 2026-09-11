@@ -11,16 +11,18 @@ module.exports = async function handler(req, res) {
 
   if (!API_KEY) return res.status(500).json({ error: 'COREBRIDGE_API_KEY is not configured' });
 
-  const endpoint = req.query.endpoint || 'ExOrder';
-  const action = req.query.action || '';
+  const queryValue = value => Array.isArray(value) ? value[0] : value;
+  const endpoint = queryValue(req.query.endpoint) || 'ExOrder';
+  const action = queryValue(req.query.action) || '';
   const allowedBases = new Set(['ExOrder', 'ExOrderProduct', 'ExOrderProductPart']);
   const allowedActions = new Set(['', 'GetOrdersByStatus']);
   if (!allowedBases.has(endpoint)) return res.status(400).json({ error: 'Endpoint not allowed' });
   if (!allowedActions.has(action)) return res.status(400).json({ error: 'Action not allowed' });
 
   const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(req.query)) {
-    if (key !== 'endpoint' && key !== 'action' && value !== undefined) params.set(key, value);
+  for (const [key, rawValue] of Object.entries(req.query)) {
+    const value = queryValue(rawValue);
+    if (key !== 'endpoint' && key !== 'action' && value !== undefined) params.set(key, String(value));
   }
   const resource = action ? `${endpoint}/${action}` : endpoint;
   const url = `${BASE_URL.replace(/\/$/, '')}/${resource}${params.toString() ? `?${params}` : ''}`;
@@ -36,4 +38,3 @@ module.exports = async function handler(req, res) {
     return res.status(502).json({ error: 'Unable to reach CoreBridge', message: error.message });
   }
 };
-
